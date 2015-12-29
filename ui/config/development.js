@@ -1,4 +1,4 @@
-var domain = `http://localhost`
+var domain = 'http://localhost'
 
 
 module.exports = {
