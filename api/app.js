@@ -8,7 +8,7 @@ import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
 import config from './config'
 import User from './models/user'
-import Gallery from './models/Gallery'
+import Gallery from './models/gallery'
 
 let app = express()
 let port = process.env.PORT || 8080
