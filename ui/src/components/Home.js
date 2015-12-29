@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
+import { domain } from 'config'
 
 export default class Home extends Component {
   constructor (props) {
@@ -10,7 +11,7 @@ export default class Home extends Component {
   }
 
   getGalleries = async () => {
-    let response = await fetch(`http://localhost:8080/api/galleries`, {
+    let response = await fetch(`${domain}:8080/api/galleries`, {
       method: `POST`,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -23,7 +24,7 @@ export default class Home extends Component {
     let json = await response.json()
 
     this.setState({
-      galleries: json
+      galleries: json || []
     })
   }
 
@@ -56,7 +57,8 @@ export default class Home extends Component {
             </div>
           </Link>
 
-          { this.state.galleries.map(g =>
+          { this.state.galleries.constructor === Array &&
+            this.state.galleries.map(g =>
           <Link
             to={ `/gallery/${g._id}` }
             key = { g._id }

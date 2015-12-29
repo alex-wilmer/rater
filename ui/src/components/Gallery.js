@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import { domain } from 'config'
 
 export default class Gallery extends Component {
   constructor (props) {
@@ -16,7 +17,7 @@ export default class Gallery extends Component {
   getGallery = async ({ password }) => {
     let { params } = this.props
 
-    let response = await fetch(`http://localhost:8080/api/gallery`, {
+    let response = await fetch(`${domain}:8080/api/gallery`, {
       method: `POST`,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

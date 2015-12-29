@@ -1,6 +1,7 @@
 import React, { Component, Children, cloneElement } from 'react'
 import { Link } from 'react-router'
 import auth from '../auth'
+import { domain } from 'config'
 
 export default class App extends Component {
   static contextTypes = {
@@ -44,7 +45,7 @@ export default class App extends Component {
       token: localStorage.token
     }
 
-    let response = await fetch(`http://localhost:8080/api/newgallery`, {
+    let response = await fetch(`${domain}:8080/api/newgallery`, {
       method: `POST`,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)

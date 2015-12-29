@@ -1,6 +1,8 @@
+import { domain } from 'config'
+
 export default {
   signup: async function (body, cb) {
-    let response = await fetch(`http://localhost:8080/signup`, {
+    let response = await fetch(`${domain}:8080/signup`, {
       method: `POST`,
       headers: {
         'Content-Type': 'application/json'
@@ -14,7 +16,7 @@ export default {
   },
 
   login: async function (body, cb) {
-    let response = await fetch(`http://localhost:8080/api/authenticate`, {
+    let response = await fetch(`${domain}:8080/api/authenticate`, {
       method: `POST`,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
