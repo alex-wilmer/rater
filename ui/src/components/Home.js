@@ -13,7 +13,11 @@ export default class Home extends Component {
     let response = await fetch(`http://localhost:8080/api/galleries`, {
       method: `POST`,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: localStorage.token })
+      body: JSON.stringify({
+        token: localStorage.token,
+        userId: localStorage.userId,
+        userEmail: localStorage.userEmail
+      })
     })
 
     let json = await response.json()
@@ -26,18 +30,32 @@ export default class Home extends Component {
   render () {
     return (
       <div>
-        <Link
-          to="/new-gallery"
-        >
-          New Gallery
-        </Link>
-
         <div
           style = {{
             display: `flex`,
             flexWrap: `wrap`,
           }}
         >
+          <Link
+            to="/new-gallery"
+          >
+            <div
+              style = {{
+                width: `10rem`,
+                height: `5rem`,
+                border: `2px solid rgb(59, 150, 80)`,
+                display: `flex`,
+                flexDirection: `column`,
+                justifyContent: `center`,
+                alignItems: `center`,
+                margin: `1rem`
+              }}
+            >
+              <div>+</div>
+              <div>New Gallery</div>
+            </div>
+          </Link>
+
           { this.state.galleries.map(g =>
           <Link
             to={ `/gallery/${g._id}` }

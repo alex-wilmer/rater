@@ -5,9 +5,21 @@ export default function NewGalleryForm ({
   createGallery
 }) {
   return (
-    <div>
+    <div
+      style = {{
+        height: `calc(100% - 5rem)`,
+        display: `flex`,
+        flexDirection: `column`,
+        justifyContent: `center`,
+        alignItems: `center`
+      }}
+    >
       <form
         onSubmit = { createGallery }
+        style = {{
+          display: `flex`,
+          flexDirection: `column`,
+        }}
       >
         <input
           name = "name"

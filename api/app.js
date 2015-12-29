@@ -133,17 +133,22 @@ apiRoutes.get('/', (req, res) => {
 })
 
 apiRoutes.post('/galleries', (req, res) => {
-	Gallery.find({}, (err, galleries) => {
+	Gallery.find({ $or: [ { owner: req.body.userEmail } ] }, (err, galleries) => {
 		res.json(galleries)
 	})
 })
 
 apiRoutes.post('/gallery', (req, res) => {
-
-	console.log(req.body)
-
 	Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
-		res.json(gallery)
+		if (gallery) {
+			if (
+				gallery.owner === req.body.userEmail ||
+				gallery.password === req.body.password
+			) {
+				res.json(gallery)
+			}
+			else res.json({ needToAuth: true })
+		}
 	})
 })
 
