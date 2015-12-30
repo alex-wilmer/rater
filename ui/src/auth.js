@@ -10,9 +10,9 @@ export default {
       body: JSON.stringify(body)
     })
 
-    let { success } = await response.json()
+    let { success, message } = await response.json()
     if (success) this.login(body, cb)
-    else cb(false)
+    else cb({ success, message })
   },
 
   login: async function (body, cb) {
@@ -22,12 +22,12 @@ export default {
       body: JSON.stringify(body)
     })
 
-    let { success, token, user } = await response.json()
+    let { success, message, token, user } = await response.json()
     if (success) {
       localStorage.token = token
       localStorage.userId = user._id
       localStorage.userEmail = user.email
-      cb(user)
+      cb({ success, message, user })
     }
     else cb(false)
   },

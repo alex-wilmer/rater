@@ -53,8 +53,6 @@ export default class App extends Component {
 
     let { success, galleryId } = await response.json()
 
-    console.log(success, galleryId)
-
     if (success) {
       this.context.history.pushState(null, `/gallery/${galleryId}`)
     }
