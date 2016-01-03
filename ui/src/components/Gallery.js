@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import moment from 'moment'
 import { domain } from 'config'
 import GalleryLogin from 'components/GalleryLogin'
-import UploadImage from 'components/uploadImage'
+import UploadImage from 'components/UploadImage'
+import ResultsTable from 'components/ResultsTable'
 
 export default class Gallery extends Component {
   constructor (props) {
@@ -11,7 +12,8 @@ export default class Gallery extends Component {
     this.state = {
       gallery: {},
       dataUrl: null,
-      link: null
+      link: null,
+      viewingImage: null
     }
 
     this.getGallery({})
@@ -36,9 +38,8 @@ export default class Gallery extends Component {
     if (gallery.needToAuth) {
       this.setState({ needToAuth: true })
     } else {
-      let userImage = gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0]
-
-      console.log(userImage)
+      let userImage =
+        gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0]
 
       if (userImage) {
         this.setState({ link: userImage.link })
@@ -60,21 +61,13 @@ export default class Gallery extends Component {
 
     let file = files[0]
     let fileReader = new FileReader()
-
     let img = new Image()
-    img.onload = function () {
-        console.log(this.width + " " + this.height)
-    }
     let _URL = window.URL || window.webkitURL
     img.src = _URL.createObjectURL(file)
 
     fileReader.onload = (event) => {
       let dataUrl = event.target.result
-
       this.setState({ dataUrl })
-
-      // Session.set('dataUrl', dataUrl)
-      // Session.set('uploadTemplate', 'uploadTwo')
     }
 
     fileReader.readAsDataURL(file)
@@ -135,9 +128,70 @@ export default class Gallery extends Component {
     })
   }
 
+  activateDeadline = async () => {
+    let { params } = this.props
+
+    let response = await fetch(`${domain}:8080/api/gallery/activate`, {
+      method: `POST`,
+      headers: {
+        'Content-Type': `application/json`
+      },
+      body: JSON.stringify({
+        token: localStorage.token,
+        galleryId: params.galleryId,
+        userEmail: localStorage.userEmail
+      })
+    })
+
+    let json = await response.json()
+    this.setState({ gallery: json.gallery })
+  }
+
+  viewImage = image => {
+    this.setState({ viewingImage: image })
+  }
+
   render () {
     return (
       <div>
+        { !!this.state.viewingImage &&
+        <div
+          style = {{
+            position: `absolute`,
+            width: `100%`,
+            height: `100%`,
+            top: 0,
+            left: 0,
+            display: `flex`,
+            justifyContent: `center`,
+            alignItems: `center`
+          }}
+        >
+          <div
+            style = {{
+              padding: `3rem`,
+              backgroundColor: `white`,
+              border: `1px solid rgb(151, 185, 169)`,
+              position: `relative`
+            }}
+          >
+            <a
+              onClick = { () => this.viewImage(null) }
+              style = {{
+                position: `absolute`,
+                right: `5px`,
+                top: `5px`
+              }}
+            >
+              Close
+            </a>
+            <img
+              src = { this.state.viewingImage.link }
+            />
+            <div>rating yadada</div>
+          </div>
+        </div>
+        }
         { this.state.loading &&
         <div> Loading loading loading ... </div>
         }
@@ -150,10 +204,18 @@ export default class Gallery extends Component {
           <div>Gallery: { this.state.gallery.name }</div>
 
           { this.state.gallery.owner === localStorage.userEmail &&
-          <div>Password: { this.state.gallery.password }</div>
+          <div>
+            <div>Password: { this.state.gallery.password }</div>
+            <button
+              onClick = { this.activateDeadline }
+            >
+              Activate Deadline
+            </button>
+          </div>
           }
 
-          <div>Submission Deadline:
+          <div>
+            <span>Submission Deadline:</span>
             <span
               style = {{
                 paddingLeft: `0.4rem`
@@ -171,6 +233,13 @@ export default class Gallery extends Component {
             dataUrl = { this.state.dataUrl }
             uploadFile = { this.uploadFile }
             uploadToImgur = { this.uploadToImgur }
+          />
+          }
+
+          { this.state.gallery.owner === localStorage.userEmail &&
+          <ResultsTable
+            images = { this.state.gallery.images }
+            viewImage = { this.viewImage }
           />
           }
         </div>

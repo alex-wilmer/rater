@@ -171,6 +171,7 @@ apiRoutes.post('/gallery/image', (req, res) => {
           link: req.body.link,
           userEmail: req.body.userEmail,
           raters: [],
+          imagesToRate: [],
           averageRating: 0
         }
       }
@@ -182,6 +183,58 @@ apiRoutes.post('/gallery/image', (req, res) => {
 
       gallery.save((err, g) => {
         console.log(`Updated Gallery`, g)
+      })
+    }
+  })
+})
+
+apiRoutes.post('/gallery/activate', (req, res) => {
+  Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
+    if (gallery && gallery.owner === req.body.userEmail) {
+      gallery.submitDeadline = +new Date()
+
+      gallery.images = gallery.images.map(x => ({
+        ...x,
+        raters: [],
+        imagesToRate: [],
+        averageRating: 0
+      }))
+
+      let imagesToPull = gallery.images.map(x => x)
+
+      gallery.images.forEach(img => {
+        let sliceImage = () => {
+          let randomIndex = Math.floor(Math.random() * imagesToPull.length)
+          return [ imagesToPull.slice(randomIndex, randomIndex + 1)[0], randomIndex ]
+        }
+
+        for (let i = 0; i < 5; i += 1) {
+          do {
+            var [ imgToRate, randomIndex ] = sliceImage()
+
+            if (imgToRate.userEmail !== img.userEmail) {
+              imgToRate = imagesToPull.splice(randomIndex, 1)[0]
+
+              img.imagesToRate = [
+                ...img.imagesToRate,
+                {
+                  link: imgToRate.link
+                }
+              ]
+              if (imagesToPull.length === 1) {
+                imagesToPull = gallery.images.map(x => x)
+              }
+            }
+          }
+          while (imgToRate.userEmail === img.userEmail && imagesToPull.length > 1)
+        }
+      })
+
+      gallery.markModified(`images`)
+
+      gallery.save((err, gallery) => {
+        console.log(`${gallery} deadline activated: ${gallery.submitDeadline}`)
+        res.json({ gallery })
       })
     }
   })
