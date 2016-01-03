@@ -117,6 +117,7 @@ apiRoutes.post('/newgallery', (req, res) => {
           submitDeadline,
           owner,
           active: true,
+          passedDeadline: false,
           createdDate: +new Date(),
           images: []
         })
@@ -192,6 +193,7 @@ apiRoutes.post('/gallery/activate', (req, res) => {
   Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
     if (gallery && gallery.owner === req.body.userEmail) {
       gallery.submitDeadline = +new Date()
+      gallery.passedDeadline = true
 
       gallery.images = gallery.images.map(x => ({
         ...x,

@@ -10,5 +10,6 @@ export default mongoose.model(`Gallery`, new Schema({
   active: Boolean,
 	owner: String,
 	createdDate: Date,
+	passedDeadline: Boolean,
 	images: []
 }))

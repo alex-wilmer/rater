@@ -19,9 +19,9 @@ export default function ResultsTable ({
         </tr>
       </thead>
       <tbody>
-        { images.map(image =>
+        { images.map((image, i) =>
         <tr
-          key = { image.userEmail }
+          key = { i }
         >
           <td>{ image.userEmail }</td>
           <td>
@@ -37,7 +37,6 @@ export default function ResultsTable ({
           </td>
           <td>{ image.raters.length }</td>
           <td>{ image.averageRating }</td>
-          <td>{ image.imagesToRate.map(x => <span>{ x.userEmail }</span>) }</td>
         </tr>
         )}
       </tbody>

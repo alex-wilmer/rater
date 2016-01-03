@@ -4,6 +4,7 @@ import { domain } from 'config'
 import GalleryLogin from 'components/GalleryLogin'
 import UploadImage from 'components/UploadImage'
 import ResultsTable from 'components/ResultsTable'
+import ViewImage from 'components/ViewImage'
 
 export default class Gallery extends Component {
   constructor (props) {
@@ -13,7 +14,8 @@ export default class Gallery extends Component {
       gallery: {},
       dataUrl: null,
       link: null,
-      viewingImage: null
+      viewingImage: null,
+      loading: true
     }
 
     this.getGallery({})
@@ -35,6 +37,8 @@ export default class Gallery extends Component {
 
     let gallery = await response.json()
 
+    console.log(gallery)
+
     if (gallery.needToAuth) {
       this.setState({ needToAuth: true })
     } else {
@@ -50,6 +54,8 @@ export default class Gallery extends Component {
         needToAuth: false
       })
     }
+
+    this.setState({ loading: false })
   }
 
   uploadFile = event => {
@@ -154,108 +160,100 @@ export default class Gallery extends Component {
   render () {
     return (
       <div>
-        { !!this.state.viewingImage &&
-        <div
-          style = {{
-            position: `absolute`,
-            width: `100%`,
-            height: `100%`,
-            top: 0,
-            left: 0,
-            display: `flex`,
-            justifyContent: `center`,
-            alignItems: `center`
-          }}
-        >
-          <div
-            style = {{
-              padding: `3rem`,
-              backgroundColor: `white`,
-              border: `1px solid rgb(151, 185, 169)`,
-              position: `relative`
-            }}
-          >
-            <a
-              onClick = { () => this.viewImage(null) }
-              style = {{
-                position: `absolute`,
-                right: `5px`,
-                top: `5px`
-              }}
-            >
-              Close
-            </a>
-            <img
-              src = { this.state.viewingImage.link }
-            />
-            <div>rating yadada</div>
-          </div>
-        </div>
-        }
         { this.state.loading &&
         <div> Loading loading loading ... </div>
         }
-        { this.state.gallery.name &&
-        <div
-          style = {{
-            padding: `3rem`
-          }}
-        >
-          <div>Gallery: { this.state.gallery.name }</div>
-
-          { this.state.gallery.owner === localStorage.userEmail &&
-          <div>
-            <div>Password: { this.state.gallery.password }</div>
-            <button
-              onClick = { this.activateDeadline }
-            >
-              Activate Deadline
-            </button>
-          </div>
-          }
-
-          <div>
-            <span>Submission Deadline:</span>
-            <span
-              style = {{
-                paddingLeft: `0.4rem`
-              }}
-            >
-            { moment(this.state.gallery.submitDeadline)
-              .format('MMMM Do YYYY, h:mm:ss a')
-            }
-            </span>
-          </div>
-
-          { this.state.gallery.owner !== localStorage.userEmail &&
-          <UploadImage
-            clearDataUrl = { this.clearDataUrl }
-            dataUrl = { this.state.dataUrl }
-            uploadFile = { this.uploadFile }
-            uploadToImgur = { this.uploadToImgur }
-          />
-          }
-
-          { this.state.gallery.owner === localStorage.userEmail &&
-          <ResultsTable
-            images = { this.state.gallery.images }
+        { this.state.gallery.name && // gallery has loaded and exists
+        <div>
+          { !!this.state.viewingImage &&
+          <ViewImage
+            viewingImage = { this.state.viewingImage }
             viewImage = { this.viewImage }
           />
           }
+          <div // the main gallery view
+            style = {{
+              padding: `3rem`
+            }}
+          >
+            <div>Gallery: { this.state.gallery.name }</div>
+
+            { this.state.gallery.owner === localStorage.userEmail &&
+            <div>
+              <div>Password: { this.state.gallery.password }</div>
+              <button
+                onClick = { this.activateDeadline }
+              >
+                Activate Deadline
+              </button>
+            </div>
+            }
+
+            <div>
+              <span>Submission Deadline:</span>
+              <span
+                style = {{
+                  paddingLeft: `0.4rem`
+                }}
+              >
+              { moment(this.state.gallery.submitDeadline)
+                .format('MMMM Do YYYY, h:mm:ss a')
+              }
+              </span>
+            </div>
+
+            { this.state.gallery.owner !== localStorage.userEmail &&
+            <div>
+              { !this.state.gallery.passedDeadline &&
+              <div>
+                { !!this.state.link && // user have submitted
+                <div>
+                  Thank you!
+                  <img
+                    src = { this.state.link }
+                  />
+                </div>
+                }
+                { !!this.state.link ||
+                <UploadImage
+                  clearDataUrl = { this.clearDataUrl }
+                  dataUrl = { this.state.dataUrl }
+                  uploadFile = { this.uploadFile }
+                  uploadToImgur = { this.uploadToImgur }
+                />
+                }
+              </div>
+              }
+              { this.state.gallery.passedDeadline &&
+              <div>
+                { !!this.state.link && // user has submitted
+                <div // TODO: show images to rate
+
+                >
+
+                </div>
+                }
+                { !!this.state.link ||
+                <div>The deadline has passed.</div>
+                }
+              </div>
+              }
+            </div>
+            }
+
+            { this.state.gallery.owner === localStorage.userEmail &&
+            <ResultsTable
+              images = { this.state.gallery.images }
+              viewImage = { this.viewImage }
+            />
+            }
+          </div>
         </div>
         }
         { this.state.needToAuth &&
         <GalleryLogin
           getGallery = { this.getGallery }
         />
-        }
-        { !!this.state.link &&
-        <div>
-          Thank you!
-          <img
-            src = { this.state.link }
-          />
-        </div>
         }
       </div>
     )
