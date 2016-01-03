@@ -117,7 +117,8 @@ apiRoutes.post('/newgallery', (req, res) => {
           submitDeadline,
           owner,
           active: true,
-          createdDate: +new Date()
+          createdDate: +new Date(),
+          images: []
         })
 
 
@@ -154,6 +155,34 @@ apiRoutes.post('/gallery', (req, res) => {
         res.json(gallery)
       }
       else res.json({ needToAuth: true })
+    }
+  })
+})
+
+apiRoutes.post('/gallery/image', (req, res) => {
+  Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
+    if (gallery) {
+      let image = gallery.images.filter(x => x.userEmail === req.body.userEmail)[0]
+
+      if (image) {
+        image.link = req.body.link
+      } else {
+        image = {
+          link: req.body.link,
+          userEmail: req.body.userEmail,
+          raters: [],
+          averageRating: 0
+        }
+      }
+
+      gallery.images = [
+        ...gallery.images.filter(x => x.userEmail !== req.body.userEmail),
+        image
+      ]
+
+      gallery.save((err, g) => {
+        console.log(`Updated Gallery`, g)
+      })
     }
   })
 })

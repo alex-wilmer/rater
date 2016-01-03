@@ -9,5 +9,6 @@ export default mongoose.model(`Gallery`, new Schema({
 	// voteDeadline: Date,
   active: Boolean,
 	owner: String,
-	createdDate: Date
+	createdDate: Date,
+	images: []
 }))

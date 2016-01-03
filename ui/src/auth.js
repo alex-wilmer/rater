@@ -5,7 +5,7 @@ export default {
     let response = await fetch(`${domain}:8080/signup`, {
       method: `POST`,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': `application/json`
       },
       body: JSON.stringify(body)
     })
@@ -18,18 +18,21 @@ export default {
   login: async function (body, cb) {
     let response = await fetch(`${domain}:8080/api/authenticate`, {
       method: `POST`,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': `application/json` },
       body: JSON.stringify(body)
     })
 
     let { success, message, token, user } = await response.json()
+
     if (success) {
       localStorage.token = token
       localStorage.userId = user._id
       localStorage.userEmail = user.email
       cb({ success, message, user })
     }
-    else cb(false)
+    else {
+      cb({ message })
+    }
   },
 
   logout (cb) {

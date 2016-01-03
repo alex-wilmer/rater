@@ -19,12 +19,18 @@ export default class App extends Component {
   }
 
   login = (type, { email, password }) => {
-    auth[type]({ email, password }, user => {
-      this.setState({
-        loggedIn: !!user,
-        user
-      })
-      this.context.history.pushState(null, `/`)
+    auth[type]({ email, password }, response => {
+      if (response.success) {
+        this.setState({
+          loggedIn: response.success,
+          user: response.user
+        })
+        this.context.history.pushState(null, `/`)
+      } else {        
+        this.setState({
+          message: response.message
+        })
+      }
     })
   }
 

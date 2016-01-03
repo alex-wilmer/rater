@@ -4,7 +4,8 @@ import auth from '../auth'
 let email, password
 
 export default function Login ({
-  login
+  login,
+  message
 }) {
   return (
     <div
@@ -32,15 +33,26 @@ export default function Login ({
           type = "password"
         />
         <button
-          onClick = { () => login(`login`, { email: email.value, password: password.value }) }
+          onClick = {
+            () => {
+              login(`login`, { email: email.value, password: password.value })
+            }
+          }
         >
           Log In
         </button>
         <button
-          onClick = { () => login(`signup`, { email: email.value, password: password.value }) }
+          onClick = {
+            () => {
+              login(`signup`, { email: email.value, password: password.value })
+            }
+          }
         >
           Sign Up
         </button>
+        { !!message &&
+        <div>{ message }</div>
+        }
       </div>
     </div>
   )
