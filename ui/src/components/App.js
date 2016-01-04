@@ -8,8 +8,8 @@ export default class App extends Component {
     history: React.PropTypes.object
   }
 
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.state = {
       loggedIn: auth.loggedIn(),
       user: {
@@ -25,8 +25,13 @@ export default class App extends Component {
           loggedIn: response.success,
           user: response.user
         })
-        this.context.history.pushState(null, `/`)
-      } else {        
+
+        let nextPathname = this.props.location.state
+          ? this.props.location.state.nextPathname
+          : `/`
+
+        this.context.history.pushState(null, nextPathname)
+      } else {
         this.setState({
           message: response.message
         })
@@ -40,13 +45,13 @@ export default class App extends Component {
     this.setState({ loggedIn: false })
   }
 
-  createGallery = async event => {
+  createGallery = async ({ name, password, submitDeadline }) => {
     event.preventDefault()
 
     let body = {
-      name: event.target.name.value,
-      password: event.target.password.value,
-      submitDeadline: event.target.submitDeadline.value,
+      name,
+      password,
+      submitDeadline,
       owner: this.state.user.email,
       token: localStorage.token
     }
@@ -83,6 +88,7 @@ export default class App extends Component {
         }}
       >
         <div
+          className = "z-depth-2"
           style = {{
             backgroundColor: `rgb(27, 173, 112)`,
             height: `5rem`,

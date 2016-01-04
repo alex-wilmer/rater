@@ -5,6 +5,7 @@ import GalleryLogin from 'components/GalleryLogin'
 import UploadImage from 'components/UploadImage'
 import ResultsTable from 'components/ResultsTable'
 import ViewImage from 'components/ViewImage'
+import ImagesToRate from 'components/ImagesToRate'
 
 export default class Gallery extends Component {
   constructor (props) {
@@ -13,7 +14,7 @@ export default class Gallery extends Component {
     this.state = {
       gallery: {},
       dataUrl: null,
-      link: null,
+      userImage: null,
       viewingImage: null,
       loading: true
     }
@@ -37,8 +38,6 @@ export default class Gallery extends Component {
 
     let gallery = await response.json()
 
-    console.log(gallery)
-
     if (gallery.needToAuth) {
       this.setState({ needToAuth: true })
     } else {
@@ -46,7 +45,7 @@ export default class Gallery extends Component {
         gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0]
 
       if (userImage) {
-        this.setState({ link: userImage.link })
+        this.setState({ userImage })
       }
 
       this.setState({
@@ -108,7 +107,6 @@ export default class Gallery extends Component {
 
     if (data.link) {
       this.setState({
-        link: data.link,
         dataUrl: null
       })
       this.saveToDb({ link: data.link })
@@ -132,6 +130,9 @@ export default class Gallery extends Component {
         link
       })
     })
+
+    let { image } = await response.json()
+    this.setState({ userImage: image })
   }
 
   activateDeadline = async () => {
@@ -154,7 +155,57 @@ export default class Gallery extends Component {
   }
 
   viewImage = image => {
-    this.setState({ viewingImage: image })
+    if (image && !image.rating) {
+      this.setState({ viewingImage: image })
+    } else if (!image) {
+      this.setState({ viewingImage: image })
+    }
+  }
+
+  rate = async ({ viewingImage, rating }) => {
+    let { params } = this.props
+
+    let multiplier = +(this.refs.multiplier || {}).value
+
+    let response = await fetch(`${domain}:8080/api/gallery/vote`, {
+      method: `POST`,
+      headers: {
+        'Content-Type': `application/json`
+      },
+      body: JSON.stringify({
+        token: localStorage.token,
+        galleryId: params.galleryId,
+        userEmail: localStorage.userEmail,
+        viewingImage,
+        rating,
+        multiplier
+      })
+    })
+
+    let { gallery, success, message } = await response.json()
+
+    if (success) {
+      console.log(gallery)
+
+      this.setState({
+        userImage:
+          gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0],
+        gallery
+      })
+    } else {
+      console.log(message)
+    }
+  }
+
+  getOwnerRating = image => {
+    let owner =
+      image.raters.filter(x => x.userEmail === localStorage.userEmail)[0]
+
+    if (owner) {
+      return (
+        `${owner.rating} (${owner.rating / owner.multiplier} * ${owner.multiplier})`
+      )
+    }
   }
 
   render () {
@@ -163,14 +214,17 @@ export default class Gallery extends Component {
         { this.state.loading &&
         <div> Loading loading loading ... </div>
         }
+
         { this.state.gallery.name && // gallery has loaded and exists
         <div>
           { !!this.state.viewingImage &&
           <ViewImage
+            rate = { this.rate }
             viewingImage = { this.state.viewingImage }
             viewImage = { this.viewImage }
           />
           }
+
           <div // the main gallery view
             style = {{
               padding: `3rem`
@@ -181,8 +235,26 @@ export default class Gallery extends Component {
             { this.state.gallery.owner === localStorage.userEmail &&
             <div>
               <div>Password: { this.state.gallery.password }</div>
+              <div>
+                <span>Voting multiplier:</span>
+                <input
+                  ref = "multiplier"
+                  placeholder = "Voting Multiplier"
+                  type = "text"
+                  defaultValue = "5"
+                  style = {{
+                    display: `inline-block`,
+                    width: `4rem`,
+                    textAlign: `center`,
+                    marginLeft: `1rem`,
+                  }}
+                />
+              </div>
               <button
                 onClick = { this.activateDeadline }
+                style = {{
+                  float: `right`
+                }}
               >
                 Activate Deadline
               </button>
@@ -206,11 +278,11 @@ export default class Gallery extends Component {
             <div>
               { !this.state.gallery.passedDeadline &&
               <div>
-                { !!this.state.link && // user have submitted
+                { !!this.state.userImage && // user has submitted
                 <div>
                   Thank you!
                   <img
-                    src = { this.state.link }
+                    src = { this.state.userImage.link }
                   />
                 </div>
                 }
@@ -226,14 +298,13 @@ export default class Gallery extends Component {
               }
               { this.state.gallery.passedDeadline &&
               <div>
-                { !!this.state.link && // user has submitted
-                <div // TODO: show images to rate
-
-                >
-
-                </div>
+                { !!this.state.userImage && // user has submitted
+                <ImagesToRate
+                  userImage = { this.state.userImage }
+                  viewImage = { this.viewImage }
+                />
                 }
-                { !!this.state.link ||
+                { !!this.state.userImage ||
                 <div>The deadline has passed.</div>
                 }
               </div>
@@ -242,10 +313,17 @@ export default class Gallery extends Component {
             }
 
             { this.state.gallery.owner === localStorage.userEmail &&
-            <ResultsTable
-              images = { this.state.gallery.images }
-              viewImage = { this.viewImage }
-            />
+            <div
+              style = {{
+                marginTop: `2rem`
+              }}
+            >
+              <ResultsTable
+                images = { this.state.gallery.images }
+                viewImage = { this.viewImage }
+                getOwnerRating = { this.getOwnerRating }
+              />
+            </div>
             }
           </div>
         </div>

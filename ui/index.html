@@ -1,8 +1,10 @@
 <html>
   <head>
     <title>Rater</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <style>
       html, body, #app {
         width: 100%;
@@ -20,6 +22,50 @@
         color: black;
         text-decoration: none;
         cursor: pointer;
+      }
+      /****** Style Star Rating Widget *****/
+      .rating {
+        border: none;
+        transform: rotateY(180deg);
+      }
+      .rating input {
+        display: none;
+      }
+      .rating label:before {
+        cursor: pointer;
+        margin: 5px;
+        font-size: 2.25em;
+        font-family: FontAwesome;
+        display: inline-block;
+        content: "\f005";
+      }
+      .rating label {
+        color: #ddd;
+      }
+      /***** CSS Magic to Highlight Stars on Hover *****/
+      .rating input:checked ~ label,
+      .rating:not(:checked) label:hover,
+      .rating:not(:checked) label:hover ~ label {
+        color: #ffd700;
+      }
+      /* hover previous stars in list */
+      .rating input:checked + label:hover,
+      .rating input:checked ~ label:hover,
+      .rating label:hover ~ input:checked ~ label,
+      .rating input:checked ~ label:hover ~ label {
+        color: #ffed85;
+      }
+      [type="radio"]:checked + label:before,
+      [type="radio"]:not(:checked) + label:before {
+        border: none;
+      }
+      [type="radio"] + label:before,
+      [type="radio"] + label:after {
+        transition: none;
+      }
+      [type="radio"]:checked + label:after {
+        border: none;
+        background-color: transparent;
       }
     </style>
   </head>

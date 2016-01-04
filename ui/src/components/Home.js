@@ -42,8 +42,8 @@ export default class Home extends Component {
           >
             <div
               style = {{
-                width: `10rem`,
-                height: `5rem`,
+                width: `15rem`,
+                height: `7rem`,
                 border: `2px solid rgb(59, 150, 80)`,
                 display: `flex`,
                 flexDirection: `column`,
@@ -65,8 +65,8 @@ export default class Home extends Component {
           >
             <div
               style = {{
-                width: `10rem`,
-                height: `5rem`,
+                width: `15rem`,
+                height: `7rem`,
                 border: `2px solid rgb(59, 150, 80)`,
                 display: `flex`,
                 justifyContent: `center`,

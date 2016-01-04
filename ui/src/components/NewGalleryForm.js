@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router'
 
+let name, password, submitDeadline
+
 export default function NewGalleryForm ({
   createGallery
 }) {
@@ -14,41 +16,48 @@ export default function NewGalleryForm ({
         alignItems: `center`
       }}
     >
-      <form
-        onSubmit = { createGallery }
+      <div
         style = {{
           display: `flex`,
           flexDirection: `column`,
         }}
       >
         <input
-          name = "name"
+          ref = { node => name = node }
           placeholder = "Name.."
           type = "text"
         />
         <input
-          name = "password"
+          ref = { node => password = node }
           placeholder = "Password.."
           type = "text"
         />
         <input
-          name = "submitDeadline"
+          ref = { node => submitDeadline = node }
           placeholder = "Submission Deadline"
           type = "text"
         />
-        {/*
-        <input
-          name = "votingDeadline"
-          placeholder = "Voting Deadline"
-          type = "text"
-        />
-        */}
-        <input
-          type = "submit"
-          value = "Create"
-        />
-        <Link to="/">Cancel</Link>
-      </form>
+        <button
+          onClick = {
+            () => {
+              createGallery({
+                name: name.value,
+                password: password.value,
+                submitDeadline: submitDeadline.value
+              })
+            }
+          }
+        >
+          Create
+        </button>
+        <button>
+          <Link
+            to="/"
+          >
+            Cancel
+          </Link>
+        </button>
+      </div>
     </div>
   )
 }

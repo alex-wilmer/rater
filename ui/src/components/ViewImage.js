@@ -1,6 +1,8 @@
 import React from 'react'
+import StarRating from 'components/StarRating'
 
 export default function ViewImage ({
+  rate,
   viewingImage,
   viewImage
 }) {
@@ -14,7 +16,8 @@ export default function ViewImage ({
         left: 0,
         display: `flex`,
         justifyContent: `center`,
-        alignItems: `center`
+        alignItems: `center`,
+        backgroundColor: `rgba(216, 236, 231, 0.55)`
       }}
     >
       <div
@@ -38,7 +41,9 @@ export default function ViewImage ({
         <img
           src = { viewingImage.link }
         />
-        <div>rating yadada</div>
+        <StarRating
+          rate = { rating => rate({ rating, viewingImage }) }
+        />
       </div>
     </div>
   )

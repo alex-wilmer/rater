@@ -2,6 +2,7 @@ import React from 'react'
 
 export default function ResultsTable ({
   images,
+  getOwnerRating,
   viewImage
 }) {
   return (
@@ -16,6 +17,7 @@ export default function ResultsTable ({
           <th>Image</th>
           <th># Ratings</th>
           <th>Avg. Rating</th>
+          <th>Owner Vote</th>
         </tr>
       </thead>
       <tbody>
@@ -37,6 +39,7 @@ export default function ResultsTable ({
           </td>
           <td>{ image.raters.length }</td>
           <td>{ image.averageRating }</td>
+          <td>{ getOwnerRating(image) }</td>
         </tr>
         )}
       </tbody>
