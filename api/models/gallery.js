@@ -5,11 +5,11 @@ let Schema = mongoose.Schema
 export default mongoose.model(`Gallery`, new Schema({
 	name: String,
 	password: String,
-	submitDeadline: Date,
+	submitDeadline: String,
 	// voteDeadline: Date,
   active: Boolean,
 	owner: String,
-	createdDate: Date,
+	createdDate: String,
 	passedDeadline: Boolean,
 	images: []
 }))
