@@ -1,41 +1,20 @@
 # Rater
 
-### Roadmap
+## Requirements
 
-When visiting the application for the first time:
+ - Node
+ - Local Mongo DB running
 
-  - create an account
-  - login
+## Setup
 
-After login:
+Install and run the API:
 
-  - list of galleries participating
-  - create new gallery
+    cd /rater/api && npm install && npm start
 
-User gallery view:
+Install and run the UI in development (port 3000):
 
-  - upload image
-  - 
+    cd /rater/ui && npm install && npm start
 
-Admin Gallery View:
+Install and run the UI in production:
 
-  - name
-  - deadline
-  - people
-
-### Models
-
-#### User
-
-  - name
-  - email
-  - password
-  - galleries owner ids
-  - galleries participant ids
-
-#### Gallery
-
-  - name
-  - deadline
-  - users
-  - max rating
+    cd /rater/ui && npm install && npm run deploy
