@@ -50,13 +50,17 @@ export default function NewGalleryForm ({
         >
           Create
         </button>
-        <button>
-          <Link
-            to="/"
+        <Link
+          to="/"
+        >
+          <button
+            style = {{
+              width: `100%`
+            }}
           >
             Cancel
-          </Link>
-        </button>
+          </button>
+        </Link>
       </div>
     </div>
   )

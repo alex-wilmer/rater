@@ -6,6 +6,10 @@ export default function StarRating ({
   return (
     <fieldset
       className = "rating"
+      style = {{
+        textAlign: `center`,
+        marginTop: `2rem`
+      }}
     >
       <input
         className = "star"

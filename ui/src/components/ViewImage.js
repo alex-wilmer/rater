@@ -2,6 +2,7 @@ import React from 'react'
 import StarRating from 'components/StarRating'
 
 export default function ViewImage ({
+  message,
   rate,
   viewingImage,
   viewImage
@@ -11,7 +12,8 @@ export default function ViewImage ({
       style = {{
         position: `absolute`,
         width: `100%`,
-        height: `100%`,
+        minHeight: `100%`,
+        padding: `4rem`,
         top: 0,
         left: 0,
         display: `flex`,
@@ -22,28 +24,47 @@ export default function ViewImage ({
     >
       <div
         style = {{
-          padding: `3rem`,
+          minWidth: `455px`,
+          padding: `5rem`,
           backgroundColor: `white`,
           border: `1px solid rgb(151, 185, 169)`,
-          position: `relative`
+          position: `relative`,
+          textAlign: `center`
         }}
       >
         <a
           onClick = { () => viewImage(null) }
           style = {{
             position: `absolute`,
-            right: `5px`,
-            top: `5px`
+            right: `15px`,
+            top: `15px`,
+            fontWeight: `bold`
           }}
         >
-          Close
+          ✕ CLOSE
         </a>
         <img
           src = { viewingImage.link }
+          style = {{
+            maxWidth: `40rem`
+          }}
         />
         <StarRating
           rate = { rating => rate({ rating, viewingImage }) }
         />
+        <div
+          style = {{
+            textAlign: `center`,
+            fontSize: `1.3em`
+          }}
+        >
+          { !!message ||
+          <div>You can only vote once! Make it count.</div>
+          }
+          { !!message &&
+          <div>{ message }</div>
+          }
+        </div>
       </div>
     </div>
   )

@@ -28,7 +28,7 @@
         border: none;
         transform: rotateY(180deg);
       }
-      .rating input {
+      .rating input, .rating span {
         display: none;
       }
       .rating label:before {
@@ -67,6 +67,17 @@
         border: none;
         background-color: transparent;
       }
+      .file {
+        position: relative;
+      }
+      .file input {
+        position: absolute;
+        display: inline-block;
+        top: 0;
+        opacity: 0.01;
+        cursor: pointer;
+      }
+
     </style>
   </head>
   <body>

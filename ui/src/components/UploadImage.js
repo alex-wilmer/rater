@@ -9,42 +9,70 @@ export default function UploadImage ({
   return (
     <div>
       { !!dataUrl ||
-      <form>
-        <input
-          type = "file"
-          name = "imageFile"
-          onChange = { uploadFile }
-        />
-        <label
-          htmlFor = "file"
+      <form
+        style = {{
+          display: `flex`,
+          justifyContent: `center`
+        }}
+      >
+        <div
+          className = "file"
+          style = {{
+            margin: `2rem 0`
+          }}
         >
-          Upload
-        </label>
+          <input
+            type = "file"
+            name = "imageFile"
+            onChange = { uploadFile }
+            style = {{
+              height: `100%`,
+              width: `100%`
+            }}
+          />
+          <button
+            htmlFor = "file"
+          >
+            Upload Image
+          </button>
+        </div>
       </form>
       }
       { !!dataUrl &&
       <div
         style = {{
           display: `flex`,
-          flexDirection: `column`
+          flexDirection: `column`,
+          justifyContent: `center`,
         }}
       >
-        <img
-          src = { dataUrl }
+        <div>
+          <img
+            src = { dataUrl }
+            style = {{
+              maxWidth: `40rem`
+            }}
+          />
+        </div>
+        <div
           style = {{
-            maxWidth: `40rem`
+            margin: `2rem 0`
           }}
-        />
-        <button
-          onClick = { clearDataUrl }
         >
-          Cancel
-        </button>
-        <button
-          onClick = { uploadToImgur }
-        >
-          Save
-        </button>
+          <button
+            onClick = { clearDataUrl }
+          >
+            Cancel
+          </button>
+          <button
+            onClick = { uploadToImgur }
+            style = {{
+              marginLeft: `3rem`
+            }}
+          >
+            Save
+          </button>
+        </div>
       </div>
       }
     </div>

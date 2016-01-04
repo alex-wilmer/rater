@@ -3,7 +3,8 @@ import React from 'react'
 let input
 
 export default function GalleryLogin ({
-  getGallery
+  getGallery,
+  message
 }) {
   return (
     <div
@@ -14,18 +15,31 @@ export default function GalleryLogin ({
         alignItems: `center`
       }}
     >
-      <input
-        ref = { node => input = node }
-        placeholder = "Password.."
-        type = "password"
-      />
-      <button
-        onClick = {
-          () => getGallery({ password: input.value })
-        }
+      <div
+        style = {{
+          width: `18rem`,
+          height: `20rem`,
+          padding: `2rem`,
+          display: `flex`,
+          flexDirection: `column`
+        }}
       >
-        Submit
-      </button>
+        <input
+          ref = { node => input = node }
+          placeholder = "Password.."
+          type = "password"
+        />
+        <button
+          onClick = {
+            () => getGallery({ password: input.value })
+          }
+        >
+          Submit
+        </button>
+        { !!message &&
+        <div>{ message }</div>
+        }
+      </div>
     </div>
   )
 }

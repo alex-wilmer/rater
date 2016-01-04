@@ -115,7 +115,15 @@ export default (app) => {
         ) {
           res.json(gallery)
         }
-        else res.json({ needToAuth: true })
+        else {
+          let response = {
+            needToAuth: true
+          }
+          if (req.body.password) {
+            response.message = `Wrong password.`
+          }
+          res.json(response)
+        }
       }
     })
   })

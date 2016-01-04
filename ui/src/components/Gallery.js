@@ -40,6 +40,9 @@ export default class Gallery extends Component {
 
     if (gallery.needToAuth) {
       this.setState({ needToAuth: true })
+      if (gallery.message) {
+        this.setState({ message: gallery.message })
+      }
     } else {
       let userImage =
         gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0]
@@ -185,13 +188,19 @@ export default class Gallery extends Component {
     let { gallery, success, message } = await response.json()
 
     if (success) {
-      console.log(gallery)
-
       this.setState({
         userImage:
           gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0],
-        gallery
+        gallery,
+        message: `Thank you!`
       })
+
+      setTimeout(() => {
+        this.setState({
+          message: null,
+          viewingImage: null
+        })
+      }, 1000)
     } else {
       console.log(message)
     }
@@ -212,13 +221,33 @@ export default class Gallery extends Component {
     return (
       <div>
         { this.state.loading &&
-        <div> Loading loading loading ... </div>
+        <div
+          style = {{
+            position: `absolute`,
+            width: `100%`,
+            height: `100%`,
+            display: `flex`,
+            alignItems: `center`,
+            justifyContent: `center`
+          }}
+        >
+          <div
+            style = {{
+              padding: `3rem 8rem`,
+              border: `1px solid rgb(87, 195, 153)`,
+              backgroundColor: `white`
+            }}
+          >
+            Loading...
+          </div>
+        </div>
         }
 
         { this.state.gallery.name && // gallery has loaded and exists
         <div>
           { !!this.state.viewingImage &&
           <ViewImage
+            message = { this.state.message }
             rate = { this.rate }
             viewingImage = { this.state.viewingImage }
             viewImage = { this.viewImage }
@@ -277,13 +306,34 @@ export default class Gallery extends Component {
             { this.state.gallery.owner !== localStorage.userEmail &&
             <div>
               { !this.state.gallery.passedDeadline &&
-              <div>
-                { !!this.state.userImage && // user has submitted
+              <div
+                style = {{
+                  display: `flex`,
+                  alignItems: `center`,
+                  justifyContent: `center`,
+                  flexDirection: `column`,
+                  textAlign: `center`,
+                  padding: `3rem`
+                }}
+              >
+                { !!this.state.userImage && !this.state.dataUrl && // user has submitted
                 <div>
-                  Thank you!
-                  <img
-                    src = { this.state.userImage.link }
-                  />
+                  <div>
+                    <img
+                      src = { this.state.userImage.link }
+                      style = {{
+                        maxWidth: `40rem`
+                      }}
+                    />
+                  </div>
+                  <div
+                    style = {{
+                      marginTop: `1rem`,
+                      fontSize: `1.3rem`
+                    }}
+                  >
+                    Thank you! You may submit a different image until the deadline.
+                  </div>
                 </div>
                 }
                 { !!this.state.link ||
@@ -330,6 +380,7 @@ export default class Gallery extends Component {
         }
         { this.state.needToAuth &&
         <GalleryLogin
+          message = { this.state.message }
           getGallery = { this.getGallery }
         />
         }
