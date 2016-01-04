@@ -183,7 +183,10 @@ export default (app) => {
             do {
               var [ imgToRate, randomIndex ] = sliceImage()
 
-              if (imgToRate.userEmail !== img.userEmail) {
+              if (
+                imgToRate.userEmail !== img.userEmail &&
+                !img.imagesToRate.some(x => x.link === imgToRate.link)
+              ) {
                 imgToRate = imagesToPull.splice(randomIndex, 1)[0]
 
                 img.imagesToRate = [
@@ -197,7 +200,10 @@ export default (app) => {
                 }
               }
             }
-            while (imgToRate.userEmail === img.userEmail && imagesToPull.length > 1)
+            while (
+              imgToRate.userEmail === img.userEmail &&
+              !img.imagesToRate.some(x => x.link === imgToRate.link)
+            )
           }
 
           img.imagesToRate = _.uniq(img.imagesToRate, `link`)
@@ -246,7 +252,7 @@ export default (app) => {
           image.averageRating =
             image.raters.reduce((acc, rater) => {
               return acc + rater.rating
-            }, 0) / image.raters.length
+            }, 0) / (image.raters.length + (req.body.multiplier - 1))
 
 
           gallery.images = [
@@ -279,18 +285,17 @@ export default (app) => {
               }
             ]
 
+            let ownerRate =
+              image.raters.filter(x => x.multiplier)[0]
+
+            let multiplier = ownerRate ? ownerRate.multiplier : 0
+
             image.averageRating =
               image.raters.reduce((acc, rater) => {
                 return acc + rater.rating
-              }, 0) / image.raters.length
+              }, 0) / (image.raters.length + multiplier)
 
             userImageToRate.rating = req.body.rating
-
-            console.log('before', userImage.imagesToRate)
-
-            console.log('filtered', ...userImage.imagesToRate.filter(x =>
-              x.link !== req.body.viewingImage.link
-            ))
 
             userImage.imagesToRate = [
               ...userImage.imagesToRate.filter(x =>
@@ -298,9 +303,6 @@ export default (app) => {
               ),
               userImageToRate
             ]
-
-            console.log('after', userImage.imagesToRate)
-
 
             gallery.images = [
               ...gallery.images.filter(x =>
