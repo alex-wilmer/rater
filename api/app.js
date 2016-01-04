@@ -33,6 +33,8 @@ app.post(`/signup`, (req, res) => {
       else {
         let user = new User({ email, password })
 
+        if (email === `admin`) user.admin = true
+
         user.save(err => {
           if (err) throw err
           res.json({ success: true })

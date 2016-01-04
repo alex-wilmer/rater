@@ -31,12 +31,29 @@ export default class Home extends Component {
   render () {
     return (
       <div>
+        { this.props.user.admin ||
+        <div
+          style = {{
+            fontSize: `1.2rem`,
+            height: `calc(100% - 5rem)`,
+            display: `flex`,
+            justifyContent: `center`,
+            alignItems: `center`,
+            flexDirection: `column`
+          }}
+        >
+          <div>Thank you for signing up.</div>
+          <div>You will receive an email with the link to the assignment.</div>
+        </div>
+        }
+        { this.props.user.admin &&
         <div
           style = {{
             display: `flex`,
             flexWrap: `wrap`,
           }}
         >
+
           <Link
             to="/new-gallery"
           >
@@ -79,6 +96,7 @@ export default class Home extends Component {
           </Link>
           )}
         </div>
+        }
       </div>
     )
   }
