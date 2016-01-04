@@ -179,7 +179,7 @@ export default (app) => {
             return [ imagesToPull.slice(randomIndex, randomIndex + 1)[0], randomIndex ]
           }
 
-          for (let i = 0; i < 5; i += 1) {
+          for (let i = 0; i < Math.min(gallery.images.length - 1, 5); i += 1) {
             do {
               var [ imgToRate, randomIndex ] = sliceImage()
 
@@ -202,7 +202,8 @@ export default (app) => {
             }
             while (
               imgToRate.userEmail === img.userEmail &&
-              !img.imagesToRate.some(x => x.link === imgToRate.link)
+              !img.imagesToRate.some(x => x.link === imgToRate.link) &&
+              imagesToPull.length > img.imagesToRate.length + 1
             )
           }
 
