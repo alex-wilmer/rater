@@ -15,9 +15,10 @@ export default function ResultsTable ({
         <tr>
           <th>User</th>
           <th>Image</th>
-          <th># Ratings</th>
+          <th># User's Image Ratings</th>
           <th>Avg. Rating</th>
-          <th>Owner Vote</th>
+          <th>Owner Rating</th>
+          <th># Ratings made on others</th>
         </tr>
       </thead>
       <tbody>
@@ -40,6 +41,7 @@ export default function ResultsTable ({
           <td>{ image.raters.length }</td>
           <td>{ image.averageRating }</td>
           <td>{ getOwnerRating(image) }</td>
+          <td>{ image.imagesToRate.filter(x => x.rating).length }</td>
         </tr>
         )}
       </tbody>
