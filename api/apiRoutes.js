@@ -180,6 +180,12 @@ export default (app) => {
           }
 
           for (let i = 0; i < Math.min(gallery.images.length - 1, 5); i += 1) {
+            console.log(
+              imgToRate.userEmail === img.userEmail,
+              !img.imagesToRate.some(x => x.link === imgToRate.link),
+              imagesToPull.length > img.imagesToRate.length + 1
+            )
+
             do {
               var [ imgToRate, randomIndex ] = sliceImage()
 
