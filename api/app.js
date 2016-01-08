@@ -7,7 +7,7 @@ import morgan from 'morgan'
 import mongoose from 'mongoose'
 import config from './config'
 import User from './models/user'
-import setupApiRoutes from './apiRoutes'
+import router from './router'
 
 let app = express()
 let port = process.env.PORT || 8080
@@ -47,8 +47,6 @@ app.post(`/signup`, (req, res) => {
   })
 })
 
-let apiRoutes = setupApiRoutes(app)
-app.use('/api', apiRoutes)
-
+app.use('/api', router(app))
 app.listen(port)
 console.log('Magic happens at http://localhost:' + port)
