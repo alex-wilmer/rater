@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken'
 import User from '../models/user'
 
 export default ({
-  apiRoutes
+  apiRoutes,
+  app
 }) => {
   apiRoutes.post(`/authenticate`, (req, res) => {
 

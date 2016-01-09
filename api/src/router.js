@@ -2,7 +2,7 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import User from './models/user'
 import Gallery from './models/gallery'
-import _ from 'lodash'
+import activateDeadline from './activateDeadline'
 
 import { auth } from './auth'
 
@@ -10,7 +10,7 @@ export default (app) => {
 
   let apiRoutes = express.Router()
 
-  auth({ apiRoutes })
+  auth({ app, apiRoutes })
 
   apiRoutes.post('/newgallery', (req, res) => {
     let { owner, name, password, submitDeadline } = req.body
@@ -110,60 +110,7 @@ export default (app) => {
   apiRoutes.post('/gallery/activate', (req, res) => {
     Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
       if (gallery && gallery.owner === req.body.userEmail) {
-        gallery.submitDeadline = +new Date()
-        gallery.passedDeadline = true
-
-        gallery.images = gallery.images.map(x => ({
-          ...x,
-          raters: [],
-          imagesToRate: [],
-          averageRating: 0
-        }))
-
-        let imagesToPull = gallery.images.map(x => x)
-
-        gallery.images.forEach(img => {
-          let sliceImage = () => {
-            let randomIndex = Math.floor(Math.random() * imagesToPull.length)
-            return [ imagesToPull.slice(randomIndex, randomIndex + 1)[0], randomIndex ]
-          }
-
-          for (let i = 0; i < Math.min(gallery.images.length - 1, 5); i += 1) {
-            console.log(
-              imgToRate.userEmail === img.userEmail,
-              !img.imagesToRate.some(x => x.link === imgToRate.link),
-              imagesToPull.length > img.imagesToRate.length + 1
-            )
-
-            do {
-              var [ imgToRate, randomIndex ] = sliceImage()
-
-              if (
-                imgToRate.userEmail !== img.userEmail &&
-                !img.imagesToRate.some(x => x.link === imgToRate.link)
-              ) {
-                imgToRate = imagesToPull.splice(randomIndex, 1)[0]
-
-                img.imagesToRate = [
-                  ...img.imagesToRate,
-                  {
-                    link: imgToRate.link
-                  }
-                ]
-                if (imagesToPull.length === 1) {
-                  imagesToPull = gallery.images.map(x => x)
-                }
-              }
-            }
-            while (
-              imgToRate.userEmail === img.userEmail &&
-              !img.imagesToRate.some(x => x.link === imgToRate.link) &&
-              imagesToPull.length > img.imagesToRate.length + 1
-            )
-          }
-
-          img.imagesToRate = _.uniq(img.imagesToRate, `link`)
-        })
+        gallery = activateDeadline(gallery)
 
         gallery.markModified(`images`)
 

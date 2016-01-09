@@ -58,7 +58,7 @@ export default class Gallery extends Component {
     }
 
     this.setState({ loading: false })
-  }
+  };
 
   uploadFile = event => {
     let files = event.target.files
@@ -79,11 +79,11 @@ export default class Gallery extends Component {
     }
 
     fileReader.readAsDataURL(file)
-  }
+  };
 
   clearDataUrl = () => {
     this.setState({ dataUrl: null })
-  }
+  };
 
   uploadToImgur = async () => {
     let format = string => {
@@ -116,7 +116,7 @@ export default class Gallery extends Component {
     }
 
     this.setState({ loading: false })
-  }
+  };
 
   saveToDb = async ({ link }) => {
     let { params } = this.props
@@ -136,7 +136,7 @@ export default class Gallery extends Component {
 
     let { image } = await response.json()
     this.setState({ userImage: image })
-  }
+  };
 
   activateDeadline = async () => {
     let { params } = this.props
@@ -155,7 +155,7 @@ export default class Gallery extends Component {
 
     let json = await response.json()
     this.setState({ gallery: json.gallery })
-  }
+  };
 
   viewImage = image => {
     if (image && !image.rating) {
@@ -163,7 +163,7 @@ export default class Gallery extends Component {
     } else if (!image) {
       this.setState({ viewingImage: image })
     }
-  }
+  };
 
   rate = async ({ viewingImage, rating }) => {
     let { params } = this.props
@@ -204,7 +204,7 @@ export default class Gallery extends Component {
     } else {
       console.log(message)
     }
-  }
+  };
 
   getOwnerRating = image => {
     let owner =
@@ -215,7 +215,7 @@ export default class Gallery extends Component {
         `${owner.rating} (${owner.rating / owner.multiplier} * ${owner.multiplier})`
       )
     }
-  }
+  };
 
   render () {
     return (
@@ -297,7 +297,7 @@ export default class Gallery extends Component {
                   paddingLeft: `0.4rem`
                 }}
               >
-              { moment(this.state.gallery.submitDeadline)
+              { moment(+this.state.gallery.submitDeadline)
                 .format('MMMM Do YYYY, h:mm:ss a')
               }
               </span>

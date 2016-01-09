@@ -19,7 +19,8 @@ export default function Login ({
       <div
         style = {{
           display: `flex`,
-          flexDirection: `column`
+          flexDirection: `column`,
+          minHeight: `200px`
         }}
       >
         <input
@@ -38,6 +39,9 @@ export default function Login ({
               login(`login`, { email: email.value, password: password.value })
             }
           }
+          style = {{
+            marginTop: `0.5rem`
+          }}
         >
           Log In
         </button>
@@ -47,6 +51,9 @@ export default function Login ({
               login(`signup`, { email: email.value, password: password.value })
             }
           }
+          style = {{
+            marginTop: `1rem`
+          }}
         >
           Sign Up
         </button>
