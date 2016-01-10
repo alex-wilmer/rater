@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken'
 import User from './models/user'
 import Gallery from './models/gallery'
 import activateDeadline from './lib/activateDeadline'
+import calculateCriticalAssessmentScores from './lib/calculateCriticalAssessmentScores'
+import _ from 'lodash'
 
 import { auth } from './auth'
 
@@ -89,8 +91,7 @@ export default ({ app, socket, io }) => {
             userEmail: req.body.userEmail,
             raters: [],
             imagesToRate: [],
-            averageRating: 0,
-            criticalAssessmentScores: []
+            averageRating: 0
           }
         }
 
@@ -166,6 +167,8 @@ export default ({ app, socket, io }) => {
             ),
             image
           ]
+
+          gallery = calculateCriticalAssessmentScores(gallery)
         }
 
         /*
@@ -199,11 +202,6 @@ export default ({ app, socket, io }) => {
 
             userImageToRate.rating = req.body.rating
 
-            userImage.criticalAssessmentScores = [
-              ...userImage.criticalAssessmentScores.slice(1, Infinity),
-              5 - Math.abs(req.body.rating - image.averageRating)
-            ]
-
             userImage.imagesToRate = [
               ...userImage.imagesToRate.filter(x =>
                 x.link !== req.body.viewingImage.link
@@ -219,6 +217,9 @@ export default ({ app, socket, io }) => {
               image,
               userImage
             ]
+
+            gallery = calculateCriticalAssessmentScores(gallery)
+            
           } else {
             res.json({
               success: false,

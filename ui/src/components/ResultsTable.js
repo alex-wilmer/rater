@@ -5,6 +5,12 @@ export default function ResultsTable ({
   getOwnerRating,
   viewImage
 }) {
+  let averageScore = image => (
+    image.imagesToRate.reduce((acc, val) =>
+      acc + val.criticalAssessmentScore
+    , 0) / image.imagesToRate.length
+  )
+
   return (
     <table
       style = {{
@@ -15,7 +21,7 @@ export default function ResultsTable ({
         <tr>
           <th>User</th>
           <th>Image</th>
-          <th># User's Image Ratings</th>
+          <th># Ratings</th>
           <th>Avg. Rating</th>
           <th>Owner Rating</th>
           <th># Ratings made on others</th>
@@ -43,12 +49,7 @@ export default function ResultsTable ({
           <td>{ image.averageRating }</td>
           <td>{ getOwnerRating(image) }</td>
           <td>{ image.imagesToRate.filter(x => x.rating).length }</td>
-          <td>
-            { (image.criticalAssessmentScores
-              .reduce((acc, val) => acc + val, 0) / image.criticalAssessmentScores.length)
-              || 0
-            }
-          </td>
+          <td>{ averageScore(image) || 0 }</td>
         </tr>
         )}
       </tbody>

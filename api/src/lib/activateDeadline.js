@@ -17,13 +17,8 @@ export default gallery => {
     ...x,
     raters: [],
     imagesToRate: [],
-    averageRating: 0,
-    criticalAssessmentScores: [
-      ..._.range(0, Math.min(gallery.images.length - 1, 5)).map(x => 0)
-    ]
+    averageRating: 0
   }))
-
-  console.log(gallery.images[0])
 
   /*
    *  Create local copy of images.
@@ -68,7 +63,8 @@ export default gallery => {
           img.imagesToRate = [
             ...img.imagesToRate,
             {
-              link: imgToRate.link
+              link: imgToRate.link,
+              criticalAssessmentScore: 0
             }
           ]
 

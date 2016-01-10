@@ -22,7 +22,16 @@ export default class Gallery extends Component {
     this.getGallery({})
 
     props.socket.on(`api:updateGallery`, gallery => {
-      this.setState({ gallery })
+      if (!this.state.needToAuth) {
+        let userImage =
+          gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0]
+
+        if (userImage) {
+          this.setState({ userImage })
+        }
+        
+        this.setState({ gallery })
+      }
     })
   }
 
