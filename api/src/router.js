@@ -2,17 +2,17 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import User from './models/user'
 import Gallery from './models/gallery'
-import activateDeadline from './activateDeadline'
+import activateDeadline from './lib/activateDeadline'
 
 import { auth } from './auth'
 
-export default (app) => {
+export default ({ app, socket, io }) => {
 
   let apiRoutes = express.Router()
 
   auth({ app, apiRoutes })
 
-  apiRoutes.post('/newgallery', (req, res) => {
+  apiRoutes.post(`/newgallery`, (req, res) => {
     let { owner, name, password, submitDeadline } = req.body
 
     if (name && password) {
@@ -31,7 +31,6 @@ export default (app) => {
             images: []
           })
 
-
           gallery.save((err, g) => {
             if (err) throw err
 
@@ -45,17 +44,17 @@ export default (app) => {
     } else res.json({ error: `Must provide name and password.` })
   })
 
-  apiRoutes.get('/', (req, res) => {
+  apiRoutes.get(`/`, (req, res) => {
     res.json({ message: 'Welcome to the coolest API on earth!' })
   })
 
-  apiRoutes.post('/galleries', (req, res) => {
+  apiRoutes.post(`/galleries`, (req, res) => {
     Gallery.find({ $or: [ { owner: req.body.userEmail } ] }, (err, galleries) => {
       res.json(galleries)
     })
   })
 
-  apiRoutes.post('/gallery', (req, res) => {
+  apiRoutes.post(`/gallery`, (req, res) => {
     Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
       if (gallery) {
         if (
@@ -77,7 +76,7 @@ export default (app) => {
     })
   })
 
-  apiRoutes.post('/gallery/image', (req, res) => {
+  apiRoutes.post(`/gallery/image`, (req, res) => {
     Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
       if (gallery) {
         let image = gallery.images.filter(x => x.userEmail === req.body.userEmail)[0]
@@ -101,13 +100,14 @@ export default (app) => {
 
         gallery.save((err, g) => {
           console.log(`Updated Gallery`, g)
+          io.emit(`api:updateGallery`, g)
           res.json({ image })
         })
       }
     })
   })
 
-  apiRoutes.post('/gallery/activate', (req, res) => {
+  apiRoutes.post(`/gallery/activate`, (req, res) => {
     Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
       if (gallery && gallery.owner === req.body.userEmail) {
         gallery = activateDeadline(gallery)
@@ -116,6 +116,7 @@ export default (app) => {
 
         gallery.save((err, gallery) => {
           console.log(`${gallery} deadline activated: ${gallery.submitDeadline}`)
+          io.emit(`api:updateGallery`, gallery)
           res.json({ gallery })
         })
 
@@ -124,7 +125,7 @@ export default (app) => {
     })
   })
 
-  apiRoutes.post('/gallery/vote', (req, res) => {
+  apiRoutes.post(`/gallery/vote`, (req, res) => {
     Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
       if (gallery) {
         let image = (
@@ -177,9 +178,6 @@ export default (app) => {
             )[0]
 
           if (!userImageToRate.rating) {
-
-            // TODO: calculate average rating
-
             image.raters = [
               ...image.raters,
               {
@@ -229,6 +227,9 @@ export default (app) => {
           console.log(
             `${req.body.userEmail} rated ${req.body.rating} on ${image.link}`
           )
+
+          io.emit(`api:updateGallery`, gallery)
+
           res.json({
             gallery,
             success: true
@@ -238,7 +239,7 @@ export default (app) => {
     })
   })
 
-  apiRoutes.get('/check', (req, res) => {
+  apiRoutes.get(`/check`, (req, res) => {
     res.json(req.decoded)
   })
 

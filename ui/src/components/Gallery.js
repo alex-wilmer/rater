@@ -20,6 +20,10 @@ export default class Gallery extends Component {
     }
 
     this.getGallery({})
+
+    props.socket.on(`api:updateGallery`, gallery => {
+      this.setState({ gallery })
+    })
   }
 
   getGallery = async ({ password }) => {
@@ -50,6 +54,8 @@ export default class Gallery extends Component {
       if (userImage) {
         this.setState({ userImage })
       }
+
+      console.log(userImage)
 
       this.setState({
         gallery,
@@ -218,6 +224,8 @@ export default class Gallery extends Component {
   };
 
   render () {
+    console.log(this.state.gallery.submitDeadline)
+
     return (
       <div>
         { this.state.loading &&

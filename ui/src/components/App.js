@@ -1,12 +1,15 @@
-import React, { Component, Children, cloneElement } from 'react'
+import React, { Component, Children, cloneElement, PropTypes } from 'react'
 import { Link } from 'react-router'
 import auth from '../auth'
 import { domain } from 'config'
+import io from 'socket.io-client'
+
+let socket = io(`${domain}:8080`)
 
 export default class App extends Component {
   static contextTypes = {
-    history: React.PropTypes.object
-  }
+    history: PropTypes.object
+  };
 
   constructor (props) {
     super(props)
@@ -37,13 +40,13 @@ export default class App extends Component {
         })
       }
     })
-  }
+  };
 
   logout = () => {
     localStorage.clear()
     this.context.history.pushState(null, `/login`)
     this.setState({ loggedIn: false })
-  }
+  };
 
   createGallery = async ({ name, password, submitDeadline }) => {
     event.preventDefault()
@@ -51,7 +54,7 @@ export default class App extends Component {
     let body = {
       name,
       password,
-      submitDeadline,
+      submitDeadline: +new Date(submitDeadline),
       owner: this.state.user.email,
       token: localStorage.token
     }
@@ -67,7 +70,7 @@ export default class App extends Component {
     if (success) {
       this.context.history.pushState(null, `/gallery/${galleryId}`)
     }
-  }
+  };
 
   render() {
     let children = Children.map(this.props.children, child => {
@@ -77,7 +80,8 @@ export default class App extends Component {
         ...this.state,
         setAuth: this.setAuth,
         createGallery: this.createGallery,
-        login: this.login
+        login: this.login,
+        socket
       })
     })
 

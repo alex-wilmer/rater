@@ -33,5 +33,11 @@ module.exports = {
        config: path.join(__dirname, 'config', process.env.NODE_ENV)
      },
      extensions: ['', '.js']
+  },
+  node: {
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty',
+    bufferutil: 'empty'
   }
 }

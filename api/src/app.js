@@ -8,8 +8,14 @@ import mongoose from 'mongoose'
 import config from './config'
 import User from './models/user'
 import router from './router'
+import socketIO from 'socket.io'
+import { Server } from 'http'
 
 let app = express()
+
+let http = Server(app)
+let io = socketIO(http)
+
 let port = process.env.PORT || 8080
 mongoose.connect(config.database)
 app.set(`superSecret`, config.secret)
@@ -47,6 +53,10 @@ app.post(`/signup`, (req, res) => {
   })
 })
 
-app.use('/api', router(app))
-app.listen(port)
-console.log('Magic happens at http://localhost:' + port)
+io.on(`connection`, socket => {
+  app.use('/api', router({ app, socket, io }))
+})
+
+http.listen(port, () => {
+  console.log(`☆ listening on localhost:${port}`)
+})

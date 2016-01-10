@@ -74,9 +74,9 @@ export default gallery => {
         }
       }
       while (imgToRate.userEmail === img.userEmail)
-    })
 
-    img.imagesToRate = _.uniq(img.imagesToRate, `link`)
+      img.imagesToRate = _.uniq(img.imagesToRate, `link`)
+    })
 
     return img
   })

@@ -68,4 +68,17 @@ describe(`After activating the deadline on a gallery`, () => {
       expect(images[0].imagesToRate).to.have.length(5);
     })
   })
+
+  it(`each image's imagesToRate array should have the correct length`, () => {
+    let gallery = {
+      images: [
+        { userEmail: `foo`, link: `foo` },
+        { userEmail: `bar`, link: `bar` },
+      ]
+    }
+
+    let { images } = activateDeadline(gallery)
+
+    expect(images[0].imagesToRate).to.have.length(1)
+  })
 })
