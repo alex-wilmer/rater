@@ -193,7 +193,7 @@ export default ({ app, socket, io }) => {
             let ownerRate =
               image.raters.filter(x => x.multiplier)[0]
 
-            let multiplier = ownerRate ? ownerRate.multiplier : 0
+            let multiplier = ownerRate ? ownerRate.multiplier - 1 : 0
 
             image.averageRating =
               image.raters.reduce((acc, rater) => {
@@ -219,7 +219,7 @@ export default ({ app, socket, io }) => {
             ]
 
             gallery = calculateCriticalAssessmentScores(gallery)
-            
+
           } else {
             res.json({
               success: false,
