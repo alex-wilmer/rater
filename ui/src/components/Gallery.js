@@ -29,7 +29,7 @@ export default class Gallery extends Component {
         if (userImage) {
           this.setState({ userImage })
         }
-        
+
         this.setState({ gallery })
       }
     })
@@ -63,8 +63,6 @@ export default class Gallery extends Component {
       if (userImage) {
         this.setState({ userImage })
       }
-
-      console.log(userImage)
 
       this.setState({
         gallery,
@@ -233,8 +231,6 @@ export default class Gallery extends Component {
   };
 
   render () {
-    console.log(this.state.gallery.submitDeadline)
-
     return (
       <div>
         { this.state.loading &&

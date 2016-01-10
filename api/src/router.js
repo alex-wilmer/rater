@@ -1,10 +1,10 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
+import schedule from 'node-schedule'
 import User from './models/user'
 import Gallery from './models/gallery'
 import activateDeadline from './lib/activateDeadline'
 import calculateCriticalAssessmentScores from './lib/calculateCriticalAssessmentScores'
-import _ from 'lodash'
 
 import { auth } from './auth'
 
@@ -32,6 +32,20 @@ export default ({ app, socket, io }) => {
             createdDate: +new Date(),
             images: []
           })
+
+          /*
+           *  Schedule activation function.
+           */
+
+          schedule.scheduleJob(new Date(submitDeadline), () => {
+            gallery = activateDeadline(gallery)
+            gallery.markModified(`images`)
+
+            gallery.save((err, gallery) => {
+              console.log(`${gallery} deadline activated: ${gallery.submitDeadline}`)
+              io.emit(`api:updateGallery`, gallery)
+            })
+          });
 
           gallery.save((err, g) => {
             if (err) throw err

@@ -54,7 +54,7 @@ export default class App extends Component {
     let body = {
       name,
       password,
-      submitDeadline: +new Date(submitDeadline),
+      submitDeadline: +new Date(submitDeadline) || +new Date(+submitDeadline),
       owner: this.state.user.email,
       token: localStorage.token
     }
