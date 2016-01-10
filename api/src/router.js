@@ -89,7 +89,8 @@ export default ({ app, socket, io }) => {
             userEmail: req.body.userEmail,
             raters: [],
             imagesToRate: [],
-            averageRating: 0
+            averageRating: 0,
+            criticalAssessmentScores: []
           }
         }
 
@@ -197,6 +198,11 @@ export default ({ app, socket, io }) => {
               }, 0) / (image.raters.length + multiplier)
 
             userImageToRate.rating = req.body.rating
+
+            userImage.criticalAssessmentScores = [
+              ...userImage.criticalAssessmentScores.slice(1, Infinity),
+              5 - Math.abs(req.body.rating - image.averageRating)
+            ]
 
             userImage.imagesToRate = [
               ...userImage.imagesToRate.filter(x =>

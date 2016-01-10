@@ -19,6 +19,7 @@ export default function ResultsTable ({
           <th>Avg. Rating</th>
           <th>Owner Rating</th>
           <th># Ratings made on others</th>
+          <th>Avg. Critical Assessment Score</th>
         </tr>
       </thead>
       <tbody>
@@ -42,6 +43,12 @@ export default function ResultsTable ({
           <td>{ image.averageRating }</td>
           <td>{ getOwnerRating(image) }</td>
           <td>{ image.imagesToRate.filter(x => x.rating).length }</td>
+          <td>
+            { (image.criticalAssessmentScores
+              .reduce((acc, val) => acc + val, 0) / image.criticalAssessmentScores.length)
+              || 0
+            }
+          </td>
         </tr>
         )}
       </tbody>
