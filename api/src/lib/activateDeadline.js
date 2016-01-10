@@ -36,13 +36,16 @@ export default gallery => {
       return [ imagesToPull.slice(randomIndex, randomIndex + 1)[0], randomIndex ]
     }
 
-    _.range(0, Math.min(gallery.images.length, 5)).forEach(x => {
+    _.range(0, Math.min(gallery.images.length - 1, 5)).forEach(x => {
       let imgToRate, randomIndex
 
       do {
         [ imgToRate, randomIndex ] = sliceImage()
 
-        if (imgToRate.userEmail !== img.userEmail) {
+        if (
+          imgToRate.userEmail !== img.userEmail &&
+          !img.imagesToRate.some(x => x.link === imgToRate.link)
+        ) {
 
           /*
            *  Remove 'randomIndex' from imagesToPull.
@@ -71,9 +74,15 @@ export default gallery => {
           if (imagesToPull.length === 1) {
             imagesToPull = gallery.images.map(x => x)
           }
+
+          break
         }
       }
-      while (imgToRate.userEmail === img.userEmail)
+      while (
+        (imgToRate.userEmail === img.userEmail ||
+        img.imagesToRate.some(x => x.link === imgToRate.link)) &&
+        img.imagesToRate.length < Math.min(gallery.images.length - 1, 5)
+      )
 
       img.imagesToRate = _.uniq(img.imagesToRate, `link`)
     })

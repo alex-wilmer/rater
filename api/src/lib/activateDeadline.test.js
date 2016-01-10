@@ -46,8 +46,8 @@ describe(`After activating the deadline on a gallery`, () => {
       }
 
       let { images } = activateDeadline(gallery)
-      let hasFiveImages = images.every(x => x.imagesToRate.length === 5)
-      expect(hasFiveImages).to.be.true
+      let hasFiveImagesToRate = images.every(x => x.imagesToRate.length === 5)
+      expect(hasFiveImagesToRate).to.be.true
     })
 
     it(`with lots of images, the typical case`, () => {
@@ -66,8 +66,8 @@ describe(`After activating the deadline on a gallery`, () => {
       }
 
       let { images } = activateDeadline(gallery)
-      let hasFiveImages = images.every(x => x.imagesToRate.length === 5)
-      expect(hasFiveImages).to.be.true
+      let hasFiveImagesToRate = images.every(x => x.imagesToRate.length === 5)
+      expect(hasFiveImagesToRate).to.be.true
     })
   })
 
