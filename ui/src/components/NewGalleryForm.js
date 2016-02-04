@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 let name, password, submitDeadline
 
 export default function NewGalleryForm ({
-  createGallery
+  createGallery,
 }) {
   return (
     <div
@@ -13,7 +13,7 @@ export default function NewGalleryForm ({
         display: `flex`,
         flexDirection: `column`,
         justifyContent: `center`,
-        alignItems: `center`
+        alignItems: `center`,
       }}
     >
       <div
@@ -43,7 +43,7 @@ export default function NewGalleryForm ({
               createGallery({
                 name: name.value,
                 password: password.value,
-                submitDeadline: submitDeadline.value
+                submitDeadline: submitDeadline.value,
               })
             }
           }
@@ -55,7 +55,7 @@ export default function NewGalleryForm ({
         >
           <button
             style = {{
-              width: `100%`
+              width: `100%`,
             }}
           >
             Cancel

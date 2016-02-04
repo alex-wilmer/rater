@@ -7,6 +7,7 @@ import morgan from 'morgan'
 import mongoose from 'mongoose'
 import config from './config'
 import User from './models/user'
+import Gallery from './models/gallery'
 import router from './router'
 import socketIO from 'socket.io'
 import { Server } from 'http'
@@ -34,7 +35,7 @@ app.post(`/signup`, (req, res) => {
       if (err) throw err
       if (user) res.json({
         success: false,
-        message: `User with this email already exists.`
+        message: `User with this email already exists.`,
       })
       else {
         let user = new User({ email, password })
@@ -49,12 +50,36 @@ app.post(`/signup`, (req, res) => {
     })
   } else res.json({
     success: false,
-    message: `Must provide email and password.`
+    message: `Must provide email and password.`,
   })
 })
 
 io.on(`connection`, socket => {
   app.use('/api', router({ app, socket, io }))
+
+  socket.on(`ui:setGalleryColor`, ({ color, _id }) => {
+    Gallery.findOne({ _id }, (err, gallery) => {
+      if (gallery) {
+        gallery.color = `#${color.hex}`
+
+        gallery.save((err, gallery) => {
+          io.emit(`api:updateGallery`, gallery)
+        })
+      }
+    })
+  })
+
+  socket.on(`ui:togglePublic`, ({ _id }) => {
+    Gallery.findOne({ _id }, (err, gallery) => {
+      if (gallery) {
+        gallery.public = !gallery.public
+
+        gallery.save((err, gallery) => {
+          io.emit(`api:updateGallery`, gallery)
+        })
+      }
+    })
+  })
 })
 
 http.listen(port, () => {

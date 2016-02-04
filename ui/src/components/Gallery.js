@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ColorPicker from 'react-color'
 import moment from 'moment'
 import { domain } from 'config'
 import GalleryLogin from 'components/GalleryLogin'
@@ -24,11 +25,13 @@ export default class Gallery extends Component {
     props.socket.on(`api:updateGallery`, gallery => {
       if (!this.state.needToAuth) {
         let userImage =
-          gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0]
+          (gallery.images || []).filter(x => x.userEmail === localStorage.userEmail)[0]
 
         if (userImage) {
           this.setState({ userImage })
         }
+
+        if (gallery.color) props.setHeaderColor(gallery.color)
 
         this.setState({ gallery })
       }
@@ -36,7 +39,7 @@ export default class Gallery extends Component {
   }
 
   getGallery = async ({ password }) => {
-    let { params } = this.props
+    let { params, setHeaderColor } = this.props
 
     let response = await fetch(`${domain}:8080/api/gallery`, {
       method: `POST`,
@@ -50,6 +53,8 @@ export default class Gallery extends Component {
     })
 
     let gallery = await response.json()
+
+    if (gallery.color) setHeaderColor(gallery.color)
 
     if (gallery.needToAuth) {
       this.setState({ needToAuth: true })
@@ -230,10 +235,23 @@ export default class Gallery extends Component {
     }
   };
 
+  setColor = color => {
+    this.props.socket.emit(`ui:setGalleryColor`, ({
+      color, _id: this.state.gallery._id
+    }))
+    this.setState({ colorPickerOpen: false })
+  };
+
+  togglePublic = () => {
+    this.props.socket.emit(`ui:togglePublic`, ({
+      _id: this.state.gallery._id
+    }))
+  };
+
   render () {
     return (
       <div>
-        { this.state.loading &&
+      { this.state.loading &&
         <div
           style = {{
             position: `absolute`,
@@ -258,7 +276,7 @@ export default class Gallery extends Component {
 
         { this.state.gallery.name && // gallery has loaded and exists
         <div>
-          { !!this.state.viewingImage &&
+        { !!this.state.viewingImage &&
           <ViewImage
             message = { this.state.message }
             rate = { this.rate }
@@ -277,6 +295,58 @@ export default class Gallery extends Component {
             { this.state.gallery.owner === localStorage.userEmail &&
             <div>
               <div>Password: { this.state.gallery.password }</div>
+
+              <div
+                style = {{
+                  display: `flex`,
+                  height: `3rem`,
+                  alignItems: `center`
+                }}
+              >
+                <button
+                  onClick = { this.togglePublic }
+                >
+                  { this.state.gallery.public
+                    ? `Make Private`
+                    : `Make Public`
+                  }
+                </button>
+              </div>
+
+              <div
+                style = {{
+                  display: `flex`,
+                  height: `3rem`,
+                  alignItems: `center`,
+                }}
+              >
+                <span>Choose color:</span>
+                <span
+                  onClick = { () => this.setState({ colorPickerOpen: true }) }
+                  style = {{
+                    cursor: `pointer`,
+                    display: `inline-block`,
+                    marginLeft: `1rem`,
+                    backgroundColor: this.state.gallery.color || `rgb(27, 173, 112)`,
+                    border: `1px solid black`,
+                    width: `30px`,
+                    height: `23px`,
+                  }}
+                />
+              </div>
+
+              { this.state.colorPickerOpen &&
+              <div
+                style = {{
+                  position: `absolute`
+                }}
+              >
+                <ColorPicker
+                  onChange = { this.setColor }
+                  type = "swatches"
+                />
+              </div>
+              }
               <div>
                 <span>Voting multiplier:</span>
                 <input
@@ -292,6 +362,7 @@ export default class Gallery extends Component {
                   }}
                 />
               </div>
+
               <button
                 onClick = { this.activateDeadline }
                 style = {{

@@ -1,14 +1,12 @@
 import express from 'express'
-import jwt from 'jsonwebtoken'
 import schedule from 'node-schedule'
-import User from './models/user'
 import Gallery from './models/gallery'
 import activateDeadline from './lib/activateDeadline'
 import calculateCriticalAssessmentScores from './lib/calculateCriticalAssessmentScores'
 
 import { auth } from './auth'
 
-export default ({ app, socket, io }) => {
+export default ({ app, io }) => {
 
   let apiRoutes = express.Router()
 
@@ -30,7 +28,7 @@ export default ({ app, socket, io }) => {
             active: true,
             passedDeadline: false,
             createdDate: +new Date(),
-            images: []
+            images: [],
           })
 
           /*
@@ -52,7 +50,7 @@ export default ({ app, socket, io }) => {
 
             res.json({
               success: true,
-              galleryId: g._id
+              galleryId: g._id,
             })
           })
         }
@@ -65,7 +63,7 @@ export default ({ app, socket, io }) => {
   })
 
   apiRoutes.post(`/galleries`, (req, res) => {
-    Gallery.find({ $or: [ { owner: req.body.userEmail } ] }, (err, galleries) => {
+    Gallery.find({ $or: [ { owner: req.body.userEmail }, { public: true } ] }, (err, galleries) => {
       res.json(galleries)
     })
   })
@@ -81,7 +79,7 @@ export default ({ app, socket, io }) => {
         }
         else {
           let response = {
-            needToAuth: true
+            needToAuth: true,
           }
           if (req.body.password) {
             response.message = `Wrong password.`
@@ -105,13 +103,13 @@ export default ({ app, socket, io }) => {
             userEmail: req.body.userEmail,
             raters: [],
             imagesToRate: [],
-            averageRating: 0
+            averageRating: 0,
           }
         }
 
         gallery.images = [
           ...gallery.images.filter(x => x.userEmail !== req.body.userEmail),
-          image
+          image,
         ]
 
         gallery.save((err, g) => {
@@ -165,8 +163,8 @@ export default ({ app, socket, io }) => {
             {
               userEmail: req.body.userEmail,
               rating: req.body.rating * req.body.multiplier,
-              multiplier: req.body.multiplier
-            }
+              multiplier: req.body.multiplier,
+            },
           ]
 
           image.averageRating =
@@ -179,7 +177,7 @@ export default ({ app, socket, io }) => {
             ...gallery.images.filter(x =>
               x.link !== req.body.viewingImage.link
             ),
-            image
+            image,
           ]
 
           gallery = calculateCriticalAssessmentScores(gallery)
@@ -200,8 +198,8 @@ export default ({ app, socket, io }) => {
               ...image.raters,
               {
                 userEmail: req.body.userEmail,
-                rating: req.body.rating
-              }
+                rating: req.body.rating,
+              },
             ]
 
             let ownerRate =
@@ -220,7 +218,7 @@ export default ({ app, socket, io }) => {
               ...userImage.imagesToRate.filter(x =>
                 x.link !== req.body.viewingImage.link
               ),
-              userImageToRate
+              userImageToRate,
             ]
 
             gallery.images = [
@@ -229,7 +227,7 @@ export default ({ app, socket, io }) => {
                 x.link !== req.body.viewingImage.link
               ),
               image,
-              userImage
+              userImage,
             ]
 
             gallery = calculateCriticalAssessmentScores(gallery)
@@ -237,7 +235,7 @@ export default ({ app, socket, io }) => {
           } else {
             res.json({
               success: false,
-              message: `Already voted!`
+              message: `Already voted!`,
             })
           }
         }
@@ -253,7 +251,7 @@ export default ({ app, socket, io }) => {
 
           res.json({
             gallery,
-            success: true
+            success: true,
           })
         })
       }

@@ -4,7 +4,7 @@ export default function UploadImage ({
   clearDataUrl,
   dataUrl,
   uploadFile,
-  uploadToImgur
+  uploadToImgur,
 }) {
   return (
     <div>
@@ -12,13 +12,13 @@ export default function UploadImage ({
       <form
         style = {{
           display: `flex`,
-          justifyContent: `center`
+          justifyContent: `center`,
         }}
       >
         <div
           className = "file"
           style = {{
-            margin: `2rem 0`
+            margin: `2rem 0`,
           }}
         >
           <input
@@ -27,7 +27,7 @@ export default function UploadImage ({
             onChange = { uploadFile }
             style = {{
               height: `100%`,
-              width: `100%`
+              width: `100%`,
             }}
           />
           <button
@@ -50,13 +50,13 @@ export default function UploadImage ({
           <img
             src = { dataUrl }
             style = {{
-              maxWidth: `40rem`
+              maxWidth: `40rem`,
             }}
           />
         </div>
         <div
           style = {{
-            margin: `2rem 0`
+            margin: `2rem 0`,
           }}
         >
           <button
@@ -67,7 +67,7 @@ export default function UploadImage ({
           <button
             onClick = { uploadToImgur }
             style = {{
-              marginLeft: `3rem`
+              marginLeft: `3rem`,
             }}
           >
             Save

@@ -8,6 +8,7 @@ export default class Home extends Component {
 
     this.state = { galleries: [] }
     this.getGalleries()
+    props.setHeaderColor(`rgb(27, 173, 112)`)
   }
 
   getGalleries = async () => {
@@ -23,6 +24,8 @@ export default class Home extends Component {
 
     let json = await response.json()
 
+    console.log(json)
+
     this.setState({
       galleries: json || []
     })
@@ -30,73 +33,53 @@ export default class Home extends Component {
 
   render () {
     return (
-      <div>
-        { this.props.user.admin ||
-        <div
-          style = {{
-            fontSize: `1.2rem`,
-            height: `calc(100% - 5rem)`,
-            display: `flex`,
-            justifyContent: `center`,
-            alignItems: `center`,
-            flexDirection: `column`
-          }}
+      <div
+        style = {{
+          display: `flex`,
+          flexWrap: `wrap`,
+        }}
+      >
+        <Link
+          to="/new-gallery"
         >
-          <div>Thank you for signing up.</div>
-          <div>You will receive an email with the link to the assignment.</div>
-        </div>
-        }
-        { this.props.user.admin &&
-        <div
-          style = {{
-            display: `flex`,
-            flexWrap: `wrap`,
-          }}
+          <div
+            style = {{
+              width: `15rem`,
+              height: `7rem`,
+              border: `2px solid rgb(59, 150, 80)`,
+              display: `flex`,
+              flexDirection: `column`,
+              justifyContent: `center`,
+              alignItems: `center`,
+              margin: `1rem`
+            }}
+          >
+            <div>+</div>
+            <div>New Gallery</div>
+          </div>
+        </Link>
+
+        { this.state.galleries.constructor === Array &&
+          this.state.galleries.map(g =>
+        <Link
+          to={ `/gallery/${g._id}` }
+          key = { g._id }
         >
-
-          <Link
-            to="/new-gallery"
+          <div
+            style = {{
+              width: `15rem`,
+              height: `7rem`,
+              border: `2px solid ${g.color || `rgb(27, 173, 112)`}`,
+              display: `flex`,
+              justifyContent: `center`,
+              alignItems: `center`,
+              margin: `1rem`
+            }}
           >
-            <div
-              style = {{
-                width: `15rem`,
-                height: `7rem`,
-                border: `2px solid rgb(59, 150, 80)`,
-                display: `flex`,
-                flexDirection: `column`,
-                justifyContent: `center`,
-                alignItems: `center`,
-                margin: `1rem`
-              }}
-            >
-              <div>+</div>
-              <div>New Gallery</div>
-            </div>
-          </Link>
-
-          { this.state.galleries.constructor === Array &&
-            this.state.galleries.map(g =>
-          <Link
-            to={ `/gallery/${g._id}` }
-            key = { g._id }
-          >
-            <div
-              style = {{
-                width: `15rem`,
-                height: `7rem`,
-                border: `2px solid rgb(59, 150, 80)`,
-                display: `flex`,
-                justifyContent: `center`,
-                alignItems: `center`,
-                margin: `1rem`
-              }}
-            >
-              { g.name }
-            </div>
-          </Link>
-          )}
-        </div>
-        }
+            { g.name }
+          </div>
+        </Link>
+        )}
       </div>
     )
   }

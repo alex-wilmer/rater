@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "find ./src -name '*.test.js' | xargs mocha --require babel-core/register",
+    "forever": "forever start -c babel-node src/app.js",
     "start": "nodemon --exec babel-node src/app.js"
   },
   "author": "",

@@ -11,5 +11,7 @@ export default mongoose.model(`Gallery`, new Schema({
 	owner: String,
 	createdDate: String,
 	passedDeadline: Boolean,
-	images: []
+	images: [],
+	color: String,
+	public: Boolean,
 }))

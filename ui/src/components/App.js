@@ -15,6 +15,7 @@ export default class App extends Component {
     super(props)
     this.state = {
       loggedIn: auth.loggedIn(),
+      headerColor: `rgb(27, 173, 112)`,
       user: {
         email: localStorage.userEmail
       },
@@ -45,7 +46,7 @@ export default class App extends Component {
   logout = () => {
     localStorage.clear()
     this.context.history.pushState(null, `/login`)
-    this.setState({ loggedIn: false })
+    this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
   };
 
   createGallery = async ({ name, password, submitDeadline }) => {
@@ -72,6 +73,8 @@ export default class App extends Component {
     }
   };
 
+  setHeaderColor = color => this.setState({ headerColor: color });
+
   render() {
     let children = Children.map(this.props.children, child => {
       return cloneElement(child, {
@@ -81,7 +84,8 @@ export default class App extends Component {
         setAuth: this.setAuth,
         createGallery: this.createGallery,
         login: this.login,
-        socket
+        setHeaderColor: this.setHeaderColor,
+        socket,
       })
     })
 
@@ -94,7 +98,7 @@ export default class App extends Component {
         <div
           className = "z-depth-2"
           style = {{
-            backgroundColor: `rgb(27, 173, 112)`,
+            backgroundColor: this.state.headerColor,
             height: `5rem`,
             width: `100%`,
             padding: `0 3rem`,
@@ -135,7 +139,7 @@ export default class App extends Component {
           </div>
           }
         </div>
-       { children }
+        { children }
       </div>
     )
   }
