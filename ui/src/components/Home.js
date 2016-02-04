@@ -24,7 +24,7 @@ export default class Home extends Component {
 
     let json = await response.json()
 
-    console.log(json)
+    console.log()
 
     this.setState({
       galleries: json || []
@@ -33,53 +33,57 @@ export default class Home extends Component {
 
   render () {
     return (
-      <div
-        style = {{
-          display: `flex`,
-          flexWrap: `wrap`,
-        }}
-      >
-        <Link
-          to="/new-gallery"
+      <div>
+        <div
+          style = {{
+            display: `flex`,
+            flexWrap: `wrap`,
+          }}
         >
-          <div
-            style = {{
-              width: `15rem`,
-              height: `7rem`,
-              border: `2px solid rgb(59, 150, 80)`,
-              display: `flex`,
-              flexDirection: `column`,
-              justifyContent: `center`,
-              alignItems: `center`,
-              margin: `1rem`
-            }}
+          { this.props.user.admin &&
+          <Link
+            to="/new-gallery"
           >
-            <div>+</div>
-            <div>New Gallery</div>
-          </div>
-        </Link>
+            <div
+              style = {{
+                width: `15rem`,
+                height: `7rem`,
+                border: `2px solid rgb(59, 150, 80)`,
+                display: `flex`,
+                flexDirection: `column`,
+                justifyContent: `center`,
+                alignItems: `center`,
+                margin: `1rem`
+              }}
+            >
+              <div>+</div>
+              <div>New Gallery</div>
+            </div>
+          </Link>
+          }
 
-        { this.state.galleries.constructor === Array &&
-          this.state.galleries.map(g =>
-        <Link
-          to={ `/gallery/${g._id}` }
-          key = { g._id }
-        >
-          <div
-            style = {{
-              width: `15rem`,
-              height: `7rem`,
-              border: `2px solid ${g.color || `rgb(27, 173, 112)`}`,
-              display: `flex`,
-              justifyContent: `center`,
-              alignItems: `center`,
-              margin: `1rem`
-            }}
+          { this.state.galleries.constructor === Array &&
+            this.state.galleries.map(g =>
+          <Link
+            to={ `/gallery/${g._id}` }
+            key = { g._id }
           >
-            { g.name }
-          </div>
-        </Link>
-        )}
+            <div
+              style = {{
+                width: `15rem`,
+                height: `7rem`,
+                border: `2px solid ${g.color || `rgb(27, 173, 112)`}`,
+                display: `flex`,
+                justifyContent: `center`,
+                alignItems: `center`,
+                margin: `1rem`
+              }}
+            >
+              { g.name }
+            </div>
+          </Link>
+          )}
+        </div>
       </div>
     )
   }
