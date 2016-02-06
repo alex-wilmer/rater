@@ -177,6 +177,10 @@ export default ({ app, io }) => {
             }, 0) / (image.raters.length + (req.body.multiplier - 1))
 
 
+          if (req.body.feedback) { // admin feedback
+            image.feedback = req.body.feedback
+          }
+
           gallery.images = [
             ...gallery.images.filter(x =>
               x.link !== req.body.viewingImage.link

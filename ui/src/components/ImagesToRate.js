@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function ImagesToRate ({
   userImage,
-  viewImage
+  viewImage,
 }) {
   return (
     <div
@@ -10,13 +10,13 @@ export default function ImagesToRate ({
         display: `flex`,
         alignItems: `center`,
         padding: `3rem 0`,
-        flexDirection: `column`
+        flexDirection: `column`,
       }}
     >
       <div
         style = {{
           fontSize: `1.2em`,
-          textAlign: `center`
+          textAlign: `center`,
         }}
       >
         Please vote on the images below:
@@ -24,19 +24,19 @@ export default function ImagesToRate ({
       <div
         style = {{
           display: `flex`,
-          flexDirection: `row`
+          flexDirection: `row`,
         }}
       >
-        { userImage.imagesToRate.map((img, i) =>
+        { userImage.imagesToRate.map((image, i) =>
         <div
           key = { i }
-          onClick = { () => viewImage(img) }
+          onClick = { () => viewImage({ image }) }
           style = {{
             margin: `1rem`,
             cursor: `pointer`,
             display: `flex`,
             flexDirection: `column`,
-            textAlign: `center`
+            textAlign: `center`,
           }}
         >
           <img
@@ -45,11 +45,11 @@ export default function ImagesToRate ({
               maxHeight: `8rem`,
               minWidth: `8rem`,
               minHeight: `8rem`,
-              marginBottom: `0.25rem`
+              marginBottom: `0.25rem`,
             }}
-            src = { img.link }
+            src = { image.link }
           />
-          { !!img.rating &&
+          { !!image.rating &&
             <span>Already Rated</span>
           }
         </div>

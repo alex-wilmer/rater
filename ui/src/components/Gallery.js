@@ -191,7 +191,7 @@ export default class Gallery extends Component {
     this.setState({ gallery: json.gallery })
   };
 
-  viewImage = image => {
+  viewImage = ({ image }) => {
     if (image && !image.rating) {
       this.setState({ viewingImage: image })
     } else if (!image) {
@@ -199,24 +199,30 @@ export default class Gallery extends Component {
     }
   };
 
-  rate = async ({ viewingImage, rating }) => {
+  rate = async ({ viewingImage, rating, feedback }) => {
     let { params } = this.props
 
     let multiplier = +(this.refs.multiplier || {}).value
+
+    let ratingSpec = {
+      token: localStorage.token,
+      galleryId: params.galleryId,
+      userEmail: localStorage.userEmail,
+      viewingImage,
+      rating,
+      multiplier
+    }
+
+    if (this.state.gallery.owner === localStorage.userEmail) {
+      ratingSpec.feedback = feedback
+    }
 
     let response = await fetch(`${domain}:8080/api/gallery/vote`, {
       method: `POST`,
       headers: {
         'Content-Type': `application/json`
       },
-      body: JSON.stringify({
-        token: localStorage.token,
-        galleryId: params.galleryId,
-        userEmail: localStorage.userEmail,
-        viewingImage,
-        rating,
-        multiplier
-      })
+      body: JSON.stringify(ratingSpec)
     })
 
     let { gallery, success, message } = await response.json()
@@ -294,6 +300,7 @@ export default class Gallery extends Component {
         <div>
         { !!this.state.viewingImage &&
           <ViewImage
+            asAdmin = { this.state.gallery.owner === localStorage.userEmail }
             message = { this.state.message }
             rate = { this.rate }
             viewingImage = { this.state.viewingImage }

@@ -105,6 +105,15 @@ export default function Gallery_UserView ({
                 <div>
                   Current Critical Assessment: { averageCriticalAssessmentScore(userImage) }
                 </div>
+                <div
+                  style = {{
+                    marginTop: `0.5rem`,
+                    fontWeight: `bold`,
+                  }}
+                >
+                  Instructor feedback:
+                </div>
+                <div>{ userImage.feedback || `None at this time.` }</div>
               </div>
 
             </div>

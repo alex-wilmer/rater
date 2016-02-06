@@ -1,7 +1,10 @@
 import React from 'react'
 import StarRating from 'components/StarRating'
 
+let feedback
+
 export default function ViewImage ({
+  asAdmin,
   message,
   rate,
   viewingImage,
@@ -33,7 +36,7 @@ export default function ViewImage ({
         }}
       >
         <a
-          onClick = { () => viewImage(null) }
+          onClick = { () => viewImage({ image: null }) }
           style = {{
             position: `absolute`,
             right: `15px`,
@@ -57,8 +60,32 @@ export default function ViewImage ({
         >
           { viewingImage.caption }
         </div>
+        { asAdmin &&
+          <textarea
+            ref = { node => feedback = node }
+            rows = "10"
+            placeholder = "Provide feedback (optional)"
+            defaultValue = { viewingImage.feedback }
+            style = {{
+              margin: `1rem 0`,
+              padding: `0.5rem`,
+              height: `8rem`,
+            }}
+          />
+        }
         <StarRating
-          rate = { rating => rate({ rating, viewingImage }) }
+          rate = {
+            rating => {
+              let ratingSpec = {
+                rating,
+                viewingImage,
+              }
+
+              if (asAdmin) ratingSpec.feedback = feedback.value
+
+              rate(ratingSpec)
+            }
+          }
         />
         <div
           style = {{
@@ -66,7 +93,7 @@ export default function ViewImage ({
             fontSize: `1.3em`,
           }}
         >
-          { !!message ||
+          { (!!message || asAdmin) ||
           <div>You can only vote once! Make it count.</div>
           }
           { !!message &&

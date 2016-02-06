@@ -1,7 +1,10 @@
 import React from 'react'
+import moment from 'moment'
 import { Link } from 'react-router'
+import DatePicker from 'material-ui/lib/date-picker/date-picker'
+import TimePicker from 'material-ui/lib/time-picker/time-picker';
 
-let name, password, submitDeadline
+let name, password, deadlineDate, deadlineTime
 
 export default function NewGalleryForm ({
   createGallery,
@@ -32,35 +35,56 @@ export default function NewGalleryForm ({
           placeholder = "Password.."
           type = "text"
         />
-        <input
-          ref = { node => submitDeadline = node }
-          placeholder = "Submission Deadline"
-          type = "text"
+        <DatePicker
+          onChange = { (event, date) => deadlineDate = date }
+          hintText = "Deadline Date"
+          mode = "portrait"
         />
-        <button
-          onClick = {
-            () => {
-              createGallery({
-                name: name.value,
-                password: password.value,
-                submitDeadline: submitDeadline.value,
-              })
-            }
-          }
-        >
-          Create
-        </button>
-        <Link
-          to="/"
+        <TimePicker
+          style = {{
+            maxHeight: `5rem`,
+          }}
+          onChange = { (event, date) => deadlineTime = date }
+          hintText = "Deadline Time"
+        />
+        <div
+          style = {{
+            marginTop: `1.5rem`,
+          }}
         >
           <button
             style = {{
               width: `100%`,
+              marginBottom: `1rem`,
             }}
+            onClick = {
+              () => {
+                let deadline = moment(deadlineDate)
+                  .add(moment(deadlineTime).hours(), `hours`)
+                  .add(moment(deadlineTime).minutes(), `minutes`)
+
+                createGallery({
+                  name: name.value,
+                  password: password.value,
+                  submitDeadline: +deadline,
+                })
+              }
+            }
           >
-            Cancel
+            Create
           </button>
-        </Link>
+          <Link
+            to="/"
+          >
+            <button
+              style = {{
+                width: `100%`,
+              }}
+            >
+              Cancel
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   )

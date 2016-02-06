@@ -88,9 +88,7 @@ export default function UploadImage ({
               marginBottom: `1rem`,
               height: `8rem`,
             }}
-          >
-
-          </textarea>
+          />
 
           <button
             onClick = { clearDataUrl }

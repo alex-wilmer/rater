@@ -33,7 +33,7 @@ export default function ResultsTable ({
           <td>{ image.userEmail }</td>
           <td>
             <a
-              onClick = { () => viewImage(image) }
+              onClick = { () => viewImage({ image }) }
               style = {{
                 color: `rgb(50, 140, 205)`,
                 fontWeight: `bold`,

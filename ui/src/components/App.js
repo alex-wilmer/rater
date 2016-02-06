@@ -1,4 +1,9 @@
 import React, { Component, Children, cloneElement, PropTypes } from 'react'
+
+// Material UI Dependency
+import injectTapEventPlugin from 'react-tap-event-plugin'
+injectTapEventPlugin()
+
 import { Link } from 'react-router'
 import auth from '../auth'
 import { domain } from 'config'
@@ -55,7 +60,7 @@ export default class App extends Component {
     let body = {
       name,
       password,
-      submitDeadline: +new Date(submitDeadline) || +new Date(+submitDeadline),
+      submitDeadline,
       owner: this.state.user.email,
       token: localStorage.token
     }
