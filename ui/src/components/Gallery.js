@@ -3,10 +3,9 @@ import ColorPicker from 'react-color'
 import moment from 'moment'
 import { domain } from 'config'
 import GalleryLogin from 'components/GalleryLogin'
-import UploadImage from 'components/UploadImage'
+import Gallery_UserView from 'components/Gallery_UserView'
 import ResultsTable from 'components/ResultsTable'
 import ViewImage from 'components/ViewImage'
-import ImagesToRate from 'components/ImagesToRate'
 
 export default class Gallery extends Component {
   constructor (props) {
@@ -34,7 +33,7 @@ export default class Gallery extends Component {
           this.setState({ userImage })
         }
 
-        if (gallery.color) props.setHeaderColor(gallery.color)
+        if (gallery.color) this.props.setHeaderColor(gallery.color)
 
         this.setState({ gallery })
       }
@@ -153,7 +152,7 @@ export default class Gallery extends Component {
 
   saveToDb = async ({ link, width, height, caption }) => {
     let { params } = this.props
-    
+
     let response = await fetch(`${domain}:8080/api/gallery/image`, {
       method: `POST`,
       headers: {
@@ -405,82 +404,13 @@ export default class Gallery extends Component {
             </div>
 
             { this.state.gallery.owner !== localStorage.userEmail &&
-            <div>
-              { !this.state.gallery.passedDeadline &&
-              <div
-                style = {{
-                  display: `flex`,
-                  alignItems: `center`,
-                  justifyContent: `center`,
-                  flexDirection: `column`,
-                  textAlign: `center`,
-                  padding: `3rem`
-                }}
-              >
-                { !!this.state.userImage && !this.state.dataUrl && // user has submitted
-                <div>
-                  <div>
-                    <img
-                      src = { this.state.userImage.link }
-                      style = {{
-                        maxWidth: `40rem`
-                      }}
-                    />
-                  </div>
-                  { !!this.state.userImage.width &&
-                  <div
-                    style = {{
-                      marginTop: `1rem`,
-                    }}
-                  >
-                    { this.state.userImage.width }px - { this.state.userImage.height }px
-                  </div>
-                  }
-                  { !!this.state.userImage.caption &&
-                  <div
-                    style = {{
-                      marginTop: `1rem`,
-                      fontSize: `1.2rem`,
-                    }}
-                  >
-                    { this.state.userImage.caption }
-                  </div>
-                  }
-                  <div
-                    style = {{
-                      marginTop: `1rem`,
-                      fontSize: `1.3rem`
-                    }}
-                  >
-                    Thank you! You may submit a different image until the deadline.
-                  </div>
-                </div>
-                }
-                { !!this.state.link ||
-                <UploadImage
-                  clearDataUrl = { this.clearDataUrl }
-                  dataUrl = { this.state.dataUrl }
-                  imageSize = { this.state.imageSize }
-                  uploadFile = { this.uploadFile }
-                  uploadToImgur = { this.uploadToImgur }
-                />
-                }
-              </div>
-              }
-              { this.state.gallery.passedDeadline &&
-              <div>
-                { !!this.state.userImage && // user has submitted
-                <ImagesToRate
-                  userImage = { this.state.userImage }
-                  viewImage = { this.viewImage }
-                />
-                }
-                { !!this.state.userImage ||
-                <div>The deadline has passed.</div>
-                }
-              </div>
-              }
-            </div>
+            <Gallery_UserView
+              { ...this.state }
+              clearDataUrl = { this.clearDataUrl }
+              uploadFile = { this.uploadFile }
+              uploadToImgur = { this.uploadToImgur }
+              viewImage = { this.viewImage }
+            />
             }
 
             { this.state.gallery.owner === localStorage.userEmail &&

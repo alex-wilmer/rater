@@ -30,6 +30,7 @@ module.exports = {
      alias: {
        components: 'src/components',
        style: 'src/style',
+       utils: 'src/utils',
        config: path.join(__dirname, 'config', process.env.NODE_ENV)
      },
      extensions: ['', '.js']

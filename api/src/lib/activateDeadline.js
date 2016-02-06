@@ -64,6 +64,7 @@ export default gallery => {
             ...img.imagesToRate,
             {
               link: imgToRate.link,
+              caption: imgToRate.caption,
               criticalAssessmentScore: 0
             }
           ]

@@ -1,17 +1,12 @@
 import React from 'react'
 import moment from 'moment'
+import averageCriticalAssessmentScore from '../utils/averageCriticalAssessmentScore'
 
 export default function ResultsTable ({
   images,
   getOwnerRating,
   viewImage,
 }) {
-  let averageScore = image => (
-    image.imagesToRate.reduce((acc, val) =>
-      acc + val.criticalAssessmentScore
-    , 0) / image.imagesToRate.length
-  )
-
   return (
     <table
       style = {{
@@ -52,7 +47,7 @@ export default function ResultsTable ({
           <td>{ image.averageRating }</td>
           <td>{ getOwnerRating(image) }</td>
           <td>{ image.imagesToRate.filter(x => x.rating).length }</td>
-          <td>{ averageScore(image) || 0 }</td>
+          <td>{ averageCriticalAssessmentScore(image) || 0 }</td>
         </tr>
         )}
       </tbody>

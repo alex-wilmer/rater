@@ -23,6 +23,7 @@ module.exports = {
     root: path.resolve(__dirname),
      alias: {
       components: 'src/components',
+      utils: 'src/utils',
       config: path.join(__dirname, 'config', process.env.NODE_ENV)
      },
      extensions: ['', '.js']
