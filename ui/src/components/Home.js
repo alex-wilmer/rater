@@ -5,10 +5,12 @@ import { domain } from 'config'
 export default class Home extends Component {
   constructor (props) {
     super(props)
-
     this.state = { galleries: [] }
+  }
+
+  componentDidMount () {
     this.getGalleries()
-    props.setHeaderColor(`rgb(27, 173, 112)`)
+    this.props.setHeaderColor(`rgb(27, 173, 112)`)
   }
 
   getGalleries = async () => {

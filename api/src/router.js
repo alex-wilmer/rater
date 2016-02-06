@@ -107,6 +107,7 @@ export default ({ app, io }) => {
             raters: [],
             imagesToRate: [],
             averageRating: 0,
+            uploadDate: +new Date(),
           }
         }
 

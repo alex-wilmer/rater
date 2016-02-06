@@ -20,10 +20,12 @@ export default class Gallery extends Component {
       viewingImage: null,
       loading: true,
     }
+  }
 
+  componentDidMount () {
     this.getGallery({})
 
-    props.socket.on(`api:updateGallery`, gallery => {
+    this.props.socket.on(`api:updateGallery`, gallery => {
       if (!this.state.needToAuth) {
         let userImage =
           (gallery.images || []).filter(x => x.userEmail === localStorage.userEmail)[0]
@@ -151,9 +153,7 @@ export default class Gallery extends Component {
 
   saveToDb = async ({ link, width, height, caption }) => {
     let { params } = this.props
-
-    console.log('12312', width, height)
-
+    
     let response = await fetch(`${domain}:8080/api/gallery/image`, {
       method: `POST`,
       headers: {

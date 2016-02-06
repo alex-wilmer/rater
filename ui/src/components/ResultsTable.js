@@ -1,9 +1,10 @@
 import React from 'react'
+import moment from 'moment'
 
 export default function ResultsTable ({
   images,
   getOwnerRating,
-  viewImage
+  viewImage,
 }) {
   let averageScore = image => (
     image.imagesToRate.reduce((acc, val) =>
@@ -14,13 +15,14 @@ export default function ResultsTable ({
   return (
     <table
       style = {{
-        width: `100%`
+        width: `100%`,
       }}
     >
       <thead>
         <tr>
           <th>User</th>
           <th>Image</th>
+          <th>Upload Date</th>
           <th># Ratings</th>
           <th>Avg. Rating</th>
           <th>Owner Rating</th>
@@ -45,6 +47,7 @@ export default function ResultsTable ({
               View Image
             </a>
           </td>
+          <td>{ image.uploadDate ? moment(image.uploadDate).fromNow() : `` }</td>
           <td>{ image.raters.length }</td>
           <td>{ image.averageRating }</td>
           <td>{ getOwnerRating(image) }</td>
