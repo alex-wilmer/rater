@@ -100,6 +100,9 @@ export default ({ app, io }) => {
         } else {
           image = {
             link: req.body.link,
+            width: req.body.width,
+            height: req.body.height,
+            caption: req.body.caption,
             userEmail: req.body.userEmail,
             raters: [],
             imagesToRate: [],

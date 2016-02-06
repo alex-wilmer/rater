@@ -15,9 +15,10 @@ export default class Gallery extends Component {
     this.state = {
       gallery: {},
       dataUrl: null,
+      imageSize: null,
       userImage: null,
       viewingImage: null,
-      loading: true
+      loading: true,
     }
 
     this.getGallery({})
@@ -93,7 +94,13 @@ export default class Gallery extends Component {
 
     fileReader.onload = (event) => {
       let dataUrl = event.target.result
-      this.setState({ dataUrl })
+      this.setState({
+        dataUrl,
+        imageSize: {
+          width: img.width,
+          height: img.height
+        }
+      })
     }
 
     fileReader.readAsDataURL(file)
@@ -103,7 +110,7 @@ export default class Gallery extends Component {
     this.setState({ dataUrl: null })
   };
 
-  uploadToImgur = async () => {
+  uploadToImgur = async ({ caption }) => {
     let format = string => {
       let [ type, ...data ] = string.split(',')
       return data.join()
@@ -130,14 +137,22 @@ export default class Gallery extends Component {
       this.setState({
         dataUrl: null
       })
-      this.saveToDb({ link: data.link })
+
+      this.saveToDb({
+        link: data.link,
+        width: data.width,
+        height: data.height,
+        caption
+      })
     }
 
     this.setState({ loading: false })
   };
 
-  saveToDb = async ({ link }) => {
+  saveToDb = async ({ link, width, height, caption }) => {
     let { params } = this.props
+
+    console.log('12312', width, height)
 
     let response = await fetch(`${domain}:8080/api/gallery/image`, {
       method: `POST`,
@@ -148,7 +163,9 @@ export default class Gallery extends Component {
         token: localStorage.token,
         galleryId: params.galleryId,
         userEmail: localStorage.userEmail,
-        link
+        link,
+        caption,
+        width, height
       })
     })
 
@@ -410,6 +427,25 @@ export default class Gallery extends Component {
                       }}
                     />
                   </div>
+                  { !!this.state.userImage.width &&
+                  <div
+                    style = {{
+                      marginTop: `1rem`,
+                    }}
+                  >
+                    { this.state.userImage.width }px - { this.state.userImage.height }px
+                  </div>
+                  }
+                  { !!this.state.userImage.caption &&
+                  <div
+                    style = {{
+                      marginTop: `1rem`,
+                      fontSize: `1.2rem`,
+                    }}
+                  >
+                    { this.state.userImage.caption }
+                  </div>
+                  }
                   <div
                     style = {{
                       marginTop: `1rem`,
@@ -424,6 +460,7 @@ export default class Gallery extends Component {
                 <UploadImage
                   clearDataUrl = { this.clearDataUrl }
                   dataUrl = { this.state.dataUrl }
+                  imageSize = { this.state.imageSize }
                   uploadFile = { this.uploadFile }
                   uploadToImgur = { this.uploadToImgur }
                 />

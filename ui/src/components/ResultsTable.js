@@ -39,7 +39,7 @@ export default function ResultsTable ({
               onClick = { () => viewImage(image) }
               style = {{
                 color: `rgb(50, 140, 205)`,
-                fontWeight: `bold`
+                fontWeight: `bold`,
               }}
             >
               View Image

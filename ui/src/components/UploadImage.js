@@ -1,8 +1,11 @@
 import React from 'react'
 
+let textarea
+
 export default function UploadImage ({
   clearDataUrl,
   dataUrl,
+  imageSize,
   uploadFile,
   uploadToImgur,
 }) {
@@ -56,16 +59,46 @@ export default function UploadImage ({
         </div>
         <div
           style = {{
-            margin: `2rem 0`,
+            margin: `1rem 0`,
           }}
         >
+          <div
+            style = {{
+              marginBottom: `1rem`,
+            }}
+          >
+            { imageSize.width }px - { imageSize.height }px
+          </div>
+
+
+          <label
+            style = {{
+              fontSize: `1.1rem`,
+              display: `block`,
+              marginBottom: `0.5rem`,
+            }}
+          >
+            Figure caption:
+          </label>
+
+          <textarea
+            ref = { node => textarea = node }
+            rows = "10"
+            style = {{
+              marginBottom: `1rem`,
+              height: `8rem`,
+            }}
+          >
+
+          </textarea>
+
           <button
             onClick = { clearDataUrl }
           >
             Cancel
           </button>
           <button
-            onClick = { uploadToImgur }
+            onClick = { () => uploadToImgur({ caption: textarea.value }) }
             style = {{
               marginLeft: `3rem`,
             }}

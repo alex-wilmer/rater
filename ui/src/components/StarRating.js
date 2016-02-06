@@ -8,7 +8,7 @@ export default function StarRating ({
       className = "rating"
       style = {{
         textAlign: `center`,
-        marginTop: `2rem`
+        marginTop: `1rem`
       }}
     >
       <input

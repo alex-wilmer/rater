@@ -5,7 +5,7 @@ export default function ViewImage ({
   message,
   rate,
   viewingImage,
-  viewImage
+  viewImage,
 }) {
   return (
     <div
@@ -19,7 +19,7 @@ export default function ViewImage ({
         display: `flex`,
         justifyContent: `center`,
         alignItems: `center`,
-        backgroundColor: `rgba(216, 236, 231, 0.55)`
+        backgroundColor: `rgba(216, 236, 231, 0.55)`,
       }}
     >
       <div
@@ -29,7 +29,7 @@ export default function ViewImage ({
           backgroundColor: `white`,
           border: `1px solid rgb(151, 185, 169)`,
           position: `relative`,
-          textAlign: `center`
+          textAlign: `center`,
         }}
       >
         <a
@@ -38,7 +38,7 @@ export default function ViewImage ({
             position: `absolute`,
             right: `15px`,
             top: `15px`,
-            fontWeight: `bold`
+            fontWeight: `bold`,
           }}
         >
           ✕ CLOSE
@@ -46,16 +46,24 @@ export default function ViewImage ({
         <img
           src = { viewingImage.link }
           style = {{
-            maxWidth: `40rem`
+            maxWidth: `40rem`,
           }}
         />
+        <div
+          style = {{
+            fontSize: `1.2rem`,
+            marginTop: `1.5rem`,
+          }}
+        >
+          { viewingImage.caption }
+        </div>
         <StarRating
           rate = { rating => rate({ rating, viewingImage }) }
         />
         <div
           style = {{
             textAlign: `center`,
-            fontSize: `1.3em`
+            fontSize: `1.3em`,
           }}
         >
           { !!message ||
