@@ -68,6 +68,14 @@ export default ({ app, io }) => {
     })
   })
 
+  apiRoutes.post(`/gallery/delete`, (req, res) => {
+    Gallery.remove({ _id: req.body.galleryId }, err => {
+      if (err) throw err
+      console.log(`Gallery removed!`)
+      res.json({ message: `Gallery removed!` })
+    })
+  })
+
   apiRoutes.post(`/gallery`, (req, res) => {
     Gallery.findOne({ _id: req.body.galleryId }, (err, gallery) => {
       if (gallery) {

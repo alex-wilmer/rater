@@ -1,6 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import ColorPicker from 'react-color'
 import moment from 'moment'
+import Dialog from 'material-ui/lib/dialog'
+import FlatButton from 'material-ui/lib/flat-button'
+import RaisedButton from 'material-ui/lib/raised-button'
 import { domain } from 'config'
 import GalleryLogin from 'components/GalleryLogin'
 import Gallery_UserView from 'components/Gallery_UserView'
@@ -8,6 +11,10 @@ import ResultsTable from 'components/ResultsTable'
 import ViewImage from 'components/ViewImage'
 
 export default class Gallery extends Component {
+  static contextTypes = {
+    history: PropTypes.object
+  };
+
   constructor (props) {
     super(props)
 
@@ -18,6 +25,7 @@ export default class Gallery extends Component {
       userImage: null,
       viewingImage: null,
       loading: true,
+      deleteModalOpen: false,
     }
   }
 
@@ -39,6 +47,9 @@ export default class Gallery extends Component {
       }
     })
   }
+
+  openDeleteModal = () => this.setState({ deleteModalOpen: true });
+  closeDeleteModal = () => this.setState({ deleteModalOpen: false });
 
   getGallery = async ({ password }) => {
     let { params, setHeaderColor } = this.props
@@ -270,9 +281,48 @@ export default class Gallery extends Component {
     }))
   };
 
+  deleteGallery = async () => {
+    let { params } = this.props
+
+    let response = await fetch(`${domain}:8080/api/gallery/delete`, {
+      method: `POST`,
+      headers: {
+        'Content-Type': `application/json`
+      },
+      body: JSON.stringify({
+        token: localStorage.token,
+        galleryId: params.galleryId,
+      })
+    })
+
+    this.context.history.pushState(null, `/`)
+  };
+
   render () {
+    let actions = [
+      <FlatButton
+        label = "Cancel"
+        secondary = { true }
+        onTouchTap = { this.closeDeleteModal }
+      />,
+      <FlatButton
+        label = "Yes, Delete It!"
+        primary = { true }
+        keyboardFocused = { true }
+        onTouchTap = { this.deleteGallery }
+      />,
+    ]
+
     return (
       <div>
+      <Dialog
+        title="Do you really want to delete this gallery?"
+        actions = { actions }
+        modal = { false }
+        open = { this.state.deleteModalOpen }
+        onRequestClose = { this.closeDeleteModal }
+      />
+
       { this.state.loading &&
         <div
           style = {{
@@ -385,6 +435,18 @@ export default class Gallery extends Component {
                   }}
                 />
               </div>
+
+              <button
+                onClick = { this.openDeleteModal }
+                style = {{
+                  float: `right`,
+                  background: `rgb(191, 45, 13)`,
+                  color: `white`,
+                  marginLeft: `1rem`,
+                }}
+              >
+                Delete Gallery
+              </button>
 
               <button
                 onClick = { this.activateDeadline }
