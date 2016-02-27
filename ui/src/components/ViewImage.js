@@ -52,6 +52,15 @@ export default function ViewImage ({
             maxWidth: `40rem`,
           }}
         />
+        { viewingImage.width && viewingImage.height &&
+        <div
+          style = {{
+            marginBottom: `1rem`,
+          }}
+        >
+          { viewingImage.width }px - { viewingImage.height }px
+        </div>
+        }
         <div
           style = {{
             fontSize: `1.2rem`,
