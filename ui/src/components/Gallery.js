@@ -3,7 +3,6 @@ import ColorPicker from 'react-color'
 import moment from 'moment'
 import Dialog from 'material-ui/lib/dialog'
 import FlatButton from 'material-ui/lib/flat-button'
-import RaisedButton from 'material-ui/lib/raised-button'
 import { domain } from 'config'
 import GalleryLogin from 'components/GalleryLogin'
 import Gallery_UserView from 'components/Gallery_UserView'
@@ -12,7 +11,7 @@ import ViewImage from 'components/ViewImage'
 
 export default class Gallery extends Component {
   static contextTypes = {
-    history: PropTypes.object
+    history: PropTypes.object,
   };
 
   constructor (props) {
@@ -35,7 +34,7 @@ export default class Gallery extends Component {
     this.props.socket.on(`api:updateGallery`, gallery => {
       if (!this.state.needToAuth) {
         let userImage =
-          (gallery.images || []).filter(x => x.userEmail === localStorage.userEmail)[0]
+          (gallery.images || []).find(x => x.userEmail === localStorage.userEmail)
 
         if (userImage) {
           this.setState({ userImage })
@@ -56,13 +55,13 @@ export default class Gallery extends Component {
 
     let response = await fetch(`${domain}:8080/api/gallery`, {
       method: `POST`,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': `application/json` },
       body: JSON.stringify({
         token: localStorage.token,
         galleryId: params.galleryId,
         userEmail: localStorage.userEmail,
-        password
-      })
+        password,
+      }),
     })
 
     let gallery = await response.json()
@@ -84,7 +83,7 @@ export default class Gallery extends Component {
 
       this.setState({
         gallery,
-        needToAuth: false
+        needToAuth: false,
       })
     }
 
@@ -95,7 +94,7 @@ export default class Gallery extends Component {
     let files = event.target.files
 
     if (!files.length) {
-      return console.log('no file chosen')
+      return console.log(`no file chosen`)
     }
 
     let file = files[0]
@@ -110,8 +109,8 @@ export default class Gallery extends Component {
         dataUrl,
         imageSize: {
           width: img.width,
-          height: img.height
-        }
+          height: img.height,
+        },
       })
     }
 
@@ -124,7 +123,7 @@ export default class Gallery extends Component {
 
   uploadToImgur = async ({ caption }) => {
     let format = string => {
-      let [ type, ...data ] = string.split(',')
+      let [ type, ...data ] = string.split(',') // eslint-disable-line
       return data.join()
     }
 
@@ -135,26 +134,24 @@ export default class Gallery extends Component {
       headers: {
         Authorization: `Client-ID dddbdc53f65b3e2`,
         Accept: `application/json`,
-        'Content-Type': `application/json`
+        'Content-Type': `application/json`,
       },
       body: JSON.stringify({
         image: format(this.state.dataUrl),
-        type: `base64`
-      })
+        type: `base64`,
+      }),
     })
 
     let { data } = await response.json()
 
     if (data.link) {
-      this.setState({
-        dataUrl: null
-      })
+      this.setState({ dataUrl: null })
 
       this.saveToDb({
         link: data.link,
         width: data.width,
         height: data.height,
-        caption
+        caption,
       })
     }
 
@@ -166,21 +163,19 @@ export default class Gallery extends Component {
 
     let response = await fetch(`${domain}:8080/api/gallery/image`, {
       method: `POST`,
-      headers: {
-        'Content-Type': `application/json`
-      },
+      headers: { 'Content-Type': `application/json` },
       body: JSON.stringify({
         token: localStorage.token,
         galleryId: params.galleryId,
         userEmail: localStorage.userEmail,
         link,
         caption,
-        width, height
-      })
+        width, height,
+      }),
     })
 
     let { image } = await response.json()
-    this.setState({ userImage: image })
+    this.setState({ userImage: image, youtubeLink: `` })
   };
 
   activateDeadline = async () => {
@@ -188,14 +183,12 @@ export default class Gallery extends Component {
 
     let response = await fetch(`${domain}:8080/api/gallery/activate`, {
       method: `POST`,
-      headers: {
-        'Content-Type': `application/json`
-      },
+      headers: { 'Content-Type': `application/json` },
       body: JSON.stringify({
         token: localStorage.token,
         galleryId: params.galleryId,
-        userEmail: localStorage.userEmail
-      })
+        userEmail: localStorage.userEmail,
+      }),
     })
 
     let json = await response.json()
@@ -221,7 +214,7 @@ export default class Gallery extends Component {
       userEmail: localStorage.userEmail,
       viewingImage,
       rating,
-      multiplier
+      multiplier,
     }
 
     if (this.state.gallery.owner === localStorage.userEmail) {
@@ -230,10 +223,8 @@ export default class Gallery extends Component {
 
     let response = await fetch(`${domain}:8080/api/gallery/vote`, {
       method: `POST`,
-      headers: {
-        'Content-Type': `application/json`
-      },
-      body: JSON.stringify(ratingSpec)
+      headers: { 'Content-Type': `application/json` },
+      body: JSON.stringify(ratingSpec),
     })
 
     let { gallery, success, message } = await response.json()
@@ -243,13 +234,13 @@ export default class Gallery extends Component {
         userImage:
           gallery.images.filter(x => x.userEmail === localStorage.userEmail)[0],
         gallery,
-        message: `Thank you!`
+        message: `Thank you!`,
       })
 
       setTimeout(() => {
         this.setState({
           message: null,
-          viewingImage: null
+          viewingImage: null,
         })
       }, 1000)
     } else {
@@ -270,42 +261,48 @@ export default class Gallery extends Component {
 
   setColor = color => {
     this.props.socket.emit(`ui:setGalleryColor`, ({
-      color, _id: this.state.gallery._id
+      color, _id: this.state.gallery._id,
     }))
     this.setState({ colorPickerOpen: false })
   };
 
   togglePublic = () => {
     this.props.socket.emit(`ui:togglePublic`, ({
-      _id: this.state.gallery._id
+      _id: this.state.gallery._id,
     }))
   };
 
   deleteGallery = async () => {
     let { params } = this.props
 
-    let response = await fetch(`${domain}:8080/api/gallery/delete`, {
+    await fetch(`${domain}:8080/api/gallery/delete`, {
       method: `POST`,
-      headers: {
-        'Content-Type': `application/json`
-      },
+      headers: { 'Content-Type': `application/json` },
       body: JSON.stringify({
         token: localStorage.token,
         galleryId: params.galleryId,
-      })
+      }),
     })
 
     this.context.history.pushState(null, `/`)
   };
 
+  submitYoutube = ({ youtubeLink }) => {
+    this.setState({ youtubeLink })
+  }
+
+  clearYoutubelink = () => this.setState({ youtubeLink: `` })
+
   render () {
     let actions = [
       <FlatButton
+        key = "button1"
         label = "Cancel"
         secondary = { true }
         onTouchTap = { this.closeDeleteModal }
       />,
       <FlatButton
+        key = "button2"
         label = "Yes, Delete It!"
         primary = { true }
         keyboardFocused = { true }
@@ -315,13 +312,13 @@ export default class Gallery extends Component {
 
     return (
       <div>
-      <Dialog
-        title="Do you really want to delete this gallery?"
-        actions = { actions }
-        modal = { false }
-        open = { this.state.deleteModalOpen }
-        onRequestClose = { this.closeDeleteModal }
-      />
+        <Dialog
+          title="Do you really want to delete this gallery?"
+          actions = { actions }
+          modal = { false }
+          open = { this.state.deleteModalOpen }
+          onRequestClose = { this.closeDeleteModal }
+        />
 
       { this.state.loading &&
         <div
@@ -331,14 +328,14 @@ export default class Gallery extends Component {
             height: `100%`,
             display: `flex`,
             alignItems: `center`,
-            justifyContent: `center`
+            justifyContent: `center`,
           }}
         >
           <div
             style = {{
               padding: `3rem 8rem`,
               border: `1px solid rgb(87, 195, 153)`,
-              backgroundColor: `white`
+              backgroundColor: `white`,
             }}
           >
             Loading...
@@ -347,162 +344,151 @@ export default class Gallery extends Component {
         }
 
         { this.state.gallery.name && // gallery has loaded and exists
-        <div>
-        { !!this.state.viewingImage &&
-          <ViewImage
-            asAdmin = { this.state.gallery.owner === localStorage.userEmail }
-            message = { this.state.message }
-            rate = { this.rate }
-            viewingImage = { this.state.viewingImage }
-            viewImage = { this.viewImage }
-          />
-          }
-
-          <div // the main gallery view
-            style = {{
-              padding: `3rem`
-            }}
-          >
-            <div>Gallery: { this.state.gallery.name }</div>
-
-            { this.state.gallery.owner === localStorage.userEmail &&
-            <div>
-              <div>Password: { this.state.gallery.password }</div>
-
-              <div
-                style = {{
-                  display: `flex`,
-                  height: `3rem`,
-                  alignItems: `center`
-                }}
-              >
-                <button
-                  onClick = { this.togglePublic }
-                >
-                  { this.state.gallery.public
-                    ? `Make Private`
-                    : `Make Public`
-                  }
-                </button>
-              </div>
-
-              <div
-                style = {{
-                  display: `flex`,
-                  height: `3rem`,
-                  alignItems: `center`,
-                }}
-              >
-                <span>Choose color:</span>
-                <span
-                  onClick = { () => this.setState({ colorPickerOpen: true }) }
-                  style = {{
-                    cursor: `pointer`,
-                    display: `inline-block`,
-                    marginLeft: `1rem`,
-                    backgroundColor: this.state.gallery.color || `rgb(27, 173, 112)`,
-                    border: `1px solid black`,
-                    width: `30px`,
-                    height: `23px`,
-                  }}
-                />
-              </div>
-
-              { this.state.colorPickerOpen &&
-              <div
-                style = {{
-                  position: `absolute`
-                }}
-              >
-                <ColorPicker
-                  onChange = { this.setColor }
-                  type = "swatches"
-                />
-              </div>
-              }
-              <div>
-                <span>Voting multiplier:</span>
-                <input
-                  ref = "multiplier"
-                  placeholder = "Voting Multiplier"
-                  type = "text"
-                  defaultValue = "5"
-                  style = {{
-                    display: `inline-block`,
-                    width: `4rem`,
-                    textAlign: `center`,
-                    marginLeft: `1rem`,
-                  }}
-                />
-              </div>
-
-              <button
-                onClick = { this.openDeleteModal }
-                style = {{
-                  float: `right`,
-                  background: `rgb(191, 45, 13)`,
-                  color: `white`,
-                  marginLeft: `1rem`,
-                }}
-              >
-                Delete Gallery
-              </button>
-
-              <button
-                onClick = { this.activateDeadline }
-                style = {{
-                  float: `right`
-                }}
-              >
-                Activate Deadline
-              </button>
-            </div>
-            }
-
-            <div>
-              <span>Submission Deadline:</span>
-              <span
-                style = {{
-                  paddingLeft: `0.4rem`
-                }}
-              >
-              { moment(+this.state.gallery.submitDeadline)
-                .format('MMMM Do YYYY, h:mm:ss a')
-              }
-              </span>
-            </div>
-
-            { this.state.gallery.owner !== localStorage.userEmail &&
-            <Gallery_UserView
-              { ...this.state }
-              clearDataUrl = { this.clearDataUrl }
-              uploadFile = { this.uploadFile }
-              uploadToImgur = { this.uploadToImgur }
+          <div>
+          { !!this.state.viewingImage &&
+            <ViewImage
+              asAdmin = { this.state.gallery.owner === localStorage.userEmail }
+              message = { this.state.message }
+              rate = { this.rate }
+              viewingImage = { this.state.viewingImage }
               viewImage = { this.viewImage }
             />
             }
 
-            { this.state.gallery.owner === localStorage.userEmail &&
-            <div
+            <div // the main gallery view
               style = {{
-                marginTop: `2rem`
+                padding: `3rem`,
               }}
             >
-              <ResultsTable
-                images = { this.state.gallery.images }
-                viewImage = { this.viewImage }
-                getOwnerRating = { this.getOwnerRating }
-              />
+              <div>Gallery: { this.state.gallery.name }</div>
+
+              { this.state.gallery.owner === localStorage.userEmail &&
+                <div>
+                  <div>Password: { this.state.gallery.password }</div>
+
+                  <div
+                    style = {{
+                      display: `flex`,
+                      height: `3rem`,
+                      alignItems: `center`,
+                    }}
+                  >
+                    <button
+                      onClick = { this.togglePublic }
+                    >
+                      { this.state.gallery.public
+                        ? `Make Private`
+                        : `Make Public`
+                      }
+                    </button>
+                  </div>
+
+                  <div
+                    style = {{
+                      display: `flex`,
+                      height: `3rem`,
+                      alignItems: `center`,
+                    }}
+                  >
+                    <span>Choose color:</span>
+                    <span
+                      onClick = { () => this.setState({ colorPickerOpen: true }) }
+                      style = {{
+                        cursor: `pointer`,
+                        display: `inline-block`,
+                        marginLeft: `1rem`,
+                        backgroundColor: this.state.gallery.color || `rgb(27, 173, 112)`,
+                        border: `1px solid black`,
+                        width: `30px`,
+                        height: `23px`,
+                      }}
+                    />
+                  </div>
+
+                  { this.state.colorPickerOpen &&
+                    <div style = {{ position: `absolute` }}>
+                      <ColorPicker
+                        onChange = { this.setColor }
+                        type = "swatches"
+                      />
+                    </div>
+                  }
+                  <div>
+                    <span>Voting multiplier:</span>
+                    <input
+                      ref = "multiplier"
+                      placeholder = "Voting Multiplier"
+                      type = "text"
+                      defaultValue = "5"
+                      style = {{
+                        display: `inline-block`,
+                        width: `4rem`,
+                        textAlign: `center`,
+                        marginLeft: `1rem`,
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    onClick = { this.openDeleteModal }
+                    style = {{
+                      float: `right`,
+                      background: `rgb(191, 45, 13)`,
+                      color: `white`,
+                      marginLeft: `1rem`,
+                    }}
+                  >
+                    Delete Gallery
+                  </button>
+
+                  <button
+                    onClick = { this.activateDeadline }
+                    style = {{ float: `right` }}
+                  >
+                    Activate Deadline
+                  </button>
+                </div>
+              }
+
+              <div>
+                <span>Submission Deadline:</span>
+                <span style={{ paddingLeft: `0.4rem` }}>
+                { moment(+this.state.gallery.submitDeadline)
+                  .format(`MMMM Do YYYY, h:mm:ss a`)
+                }
+                </span>
+              </div>
+
+              { this.state.gallery.owner !== localStorage.userEmail &&
+                <Gallery_UserView
+                  { ...this.state }
+                  clearDataUrl = { this.clearDataUrl }
+                  uploadFile = { this.uploadFile }
+                  uploadToImgur = { this.uploadToImgur }
+                  viewImage = { this.viewImage }
+                  submitYoutube = { this.submitYoutube }
+                  clearYoutubelink = { this.clearYoutubelink }
+                  saveToDb = { this.saveToDb }
+                />
+              }
+
+              { this.state.gallery.owner === localStorage.userEmail &&
+                <div style={{ marginTop: `2rem` }}>
+                  <ResultsTable
+                    images = { this.state.gallery.images }
+                    viewImage = { this.viewImage }
+                    getOwnerRating = { this.getOwnerRating }
+                  />
+                </div>
+              }
             </div>
-            }
           </div>
-        </div>
         }
         { this.state.needToAuth &&
-        <GalleryLogin
-          message = { this.state.message }
-          getGallery = { this.getGallery }
-        />
+          <GalleryLogin
+            message = { this.state.message }
+            getGallery = { this.getGallery }
+          />
         }
       </div>
     )

@@ -46,12 +46,22 @@ export default function ViewImage ({
         >
           ✕ CLOSE
         </a>
-        <img
-          src = { viewingImage.link }
-          style = {{
-            maxWidth: `40rem`,
-          }}
-        />
+        { viewingImage.link.includes(`youtube`) &&
+          <iframe
+            width="560"
+            height="315"
+            src={ `https://www.youtube.com/embed/${viewingImage.link.split(`=`).pop()}` }
+            frameBorder="0" allowFullScreen
+          />
+        }
+        { viewingImage.link.includes(`youtube`) ||
+          <img
+            src = { viewingImage.link }
+            style = {{
+              maxWidth: `40rem`,
+            }}
+          />
+        }
         { viewingImage.width && viewingImage.height &&
         <div
           style = {{

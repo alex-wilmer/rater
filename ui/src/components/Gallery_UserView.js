@@ -3,6 +3,8 @@ import ImagesToRate from 'components/ImagesToRate'
 import UploadImage from 'components/UploadImage'
 import averageCriticalAssessmentScore from '../utils/averageCriticalAssessmentScore'
 
+let youtube, textarea
+
 export default function Gallery_UserView ({
   clearDataUrl,
   dataUrl,
@@ -13,6 +15,10 @@ export default function Gallery_UserView ({
   uploadToImgur,
   userImage,
   viewImage,
+  submitYoutube,
+  youtubeLink,
+  clearYoutubelink,
+  saveToDb,
 }) {
   return (
     <div>
@@ -30,31 +36,41 @@ export default function Gallery_UserView ({
         { !!userImage && !dataUrl && // user has submitted
         <div>
           <div>
-            <img
-              src = { userImage.link }
-              style = {{
-                maxWidth: `40rem`,
-              }}
-            />
+            { userImage.link.includes(`youtube`) &&
+              <iframe
+                width="560"
+                height="315"
+                src={ `https://www.youtube.com/embed/${userImage.link.split(`=`).pop()}` }
+                frameBorder="0" allowFullScreen
+              />
+            }
+            { userImage.link.includes(`youtube`) ||
+              <img
+                src = { userImage.link }
+                style = {{
+                  maxWidth: `40rem`,
+                }}
+              />
+            }
           </div>
           { !!userImage.width &&
-          <div
-            style = {{
-              marginTop: `1rem`,
-            }}
-          >
-            { userImage.width }px - { userImage.height }px
-          </div>
+            <div
+              style = {{
+                marginTop: `1rem`,
+              }}
+            >
+              { userImage.width }px - { userImage.height }px
+            </div>
           }
           { !!userImage.caption &&
-          <div
-            style = {{
-              marginTop: `1rem`,
-              fontSize: `1.2rem`,
-            }}
-          >
-            { userImage.caption }
-          </div>
+            <div
+              style = {{
+                marginTop: `1rem`,
+                fontSize: `1.2rem`,
+              }}
+            >
+              { userImage.caption }
+            </div>
           }
           <div
             style = {{
@@ -67,13 +83,70 @@ export default function Gallery_UserView ({
         </div>
         }
         { !!link ||
-        <UploadImage
-          clearDataUrl = { clearDataUrl }
-          dataUrl = { dataUrl }
-          imageSize = { imageSize }
-          uploadFile = { uploadFile }
-          uploadToImgur = { uploadToImgur }
-        />
+          <UploadImage
+            clearDataUrl = { clearDataUrl }
+            dataUrl = { dataUrl }
+            imageSize = { imageSize }
+            uploadFile = { uploadFile }
+            uploadToImgur = { uploadToImgur }
+          />
+        }
+        { !!link ||
+          <div>
+            <div>or paste youtube link</div>
+            <input
+              ref = { node => youtube = node }
+              style = {{ width: `20rem` }}
+            />
+            <button
+              onClick = { () => submitYoutube({ youtubeLink: youtube.value })}
+            >
+              Submit
+            </button>
+          </div>
+        }
+
+        { !!youtubeLink && !link &&
+          <div>
+            <iframe
+              width="560"
+              height="315"
+              src={ `https://www.youtube.com/embed/${youtubeLink.split(`=`).pop()}` }
+              frameBorder="0" allowFullScreen
+            />
+            <label
+              style = {{
+                fontSize: `1.1rem`,
+                display: `block`,
+                marginBottom: `0.5rem`,
+              }}
+            >
+              Figure caption:
+            </label>
+
+            <textarea
+              ref = { node => textarea = node }
+              rows = "10"
+              style = {{
+                marginBottom: `1rem`,
+                height: `8rem`,
+              }}
+            />
+
+            <button
+              onClick = { clearYoutubelink }
+            >
+              Cancel
+            </button>
+            <button
+              onClick = { () => saveToDb({ link: youtubeLink, caption: textarea.value }) }
+              style = {{
+                marginLeft: `3rem`,
+              }}
+            >
+              Save
+            </button>
+          </div>
         }
       </div>
       }
@@ -119,15 +192,15 @@ export default function Gallery_UserView ({
             </div>
           }
           { userImage.imagesToRate.every(x => x.rating) ||
-          <ImagesToRate
-            userImage = { userImage }
-            viewImage = { viewImage }
-          />
+            <ImagesToRate
+              userImage = { userImage }
+              viewImage = { viewImage }
+            />
           }
         </div>
         }
         { !!userImage ||
-        <div>The deadline has passed.</div>
+          <div>The deadline has passed.</div>
         }
       </div>
       }
