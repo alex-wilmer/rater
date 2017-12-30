@@ -1,71 +1,54 @@
 import React from 'react'
 
-export default function StarRating ({
-  rate
-}) {
+export default function StarRating({ rate }) {
   return (
     <fieldset
-      className = "rating"
-      style = {{
+      className="rating"
+      style={{
         textAlign: `center`,
-        marginTop: `1rem`
+        marginTop: `1rem`,
       }}
     >
       <input
-        className = "star"
-        type = "radio"
-        name = "rating"
-        id = { `star1` }
-        onClick = { () => rate(5) }
+        className="star"
+        type="radio"
+        name="rating"
+        id={`star1`}
+        onClick={() => rate(5)}
       />,
-      <label
-        className = "full"
-        htmlFor = { `star1` }
-      />
+      <label className="full" htmlFor={`star1`} />
       <input
-        className = "star"
-        type = "radio"
-        name = "rating"
-        id = { `star2` }
-        onClick = { () => rate(4) }
+        className="star"
+        type="radio"
+        name="rating"
+        id={`star2`}
+        onClick={() => rate(4)}
       />,
-      <label
-        className = "full"
-        htmlFor = { `star2` }
-      />
+      <label className="full" htmlFor={`star2`} />
       <input
-        className = "star"
-        type = "radio"
-        name = "rating"
-        id = { `star3` }
-        onClick = { () => rate(3) }
+        className="star"
+        type="radio"
+        name="rating"
+        id={`star3`}
+        onClick={() => rate(3)}
       />,
-      <label
-        className = "full"
-        htmlFor = { `star3` }
-      />
+      <label className="full" htmlFor={`star3`} />
       <input
-        className = "star"
-        type = "radio"
-        name = "rating"
-        id = { `star4` }
-        onClick = { () => rate(2) }
+        className="star"
+        type="radio"
+        name="rating"
+        id={`star4`}
+        onClick={() => rate(2)}
       />,
-      <label
-        className = "full"
-        htmlFor = { `star4` }
-      />
+      <label className="full" htmlFor={`star4`} />
       <input
-        className = "star"
-        type = "radio"
-        name = "rating"
-        id = { `star5` }
-        onClick = { () => rate(1) }
+        className="star"
+        type="radio"
+        name="rating"
+        id={`star5`}
+        onClick={() => rate(1)}
       />,
-      <label
-        className = "full"
-        htmlFor = { `star5` }
-      />
+      <label className="full" htmlFor={`star5`} />
     </fieldset>
   )
 }

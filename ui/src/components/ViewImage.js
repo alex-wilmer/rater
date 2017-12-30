@@ -1,9 +1,9 @@
 import React from 'react'
-import StarRating from 'components/StarRating'
+import StarRating from './StarRating'
 
 let feedback
 
-export default function ViewImage ({
+export default function ViewImage({
   asAdmin,
   message,
   rate,
@@ -12,7 +12,7 @@ export default function ViewImage ({
 }) {
   return (
     <div
-      style = {{
+      style={{
         position: `absolute`,
         width: `100%`,
         minHeight: `100%`,
@@ -26,7 +26,7 @@ export default function ViewImage ({
       }}
     >
       <div
-        style = {{
+        style={{
           minWidth: `455px`,
           padding: `5rem`,
           backgroundColor: `white`,
@@ -36,8 +36,8 @@ export default function ViewImage ({
         }}
       >
         <a
-          onClick = { () => viewImage({ image: null }) }
-          style = {{
+          onClick={() => viewImage({ image: null })}
+          style={{
             position: `absolute`,
             right: `15px`,
             top: `15px`,
@@ -46,78 +46,78 @@ export default function ViewImage ({
         >
           ✕ CLOSE
         </a>
-        { viewingImage.link.includes(`youtube`) &&
+        {viewingImage.link.includes(`youtube`) && (
           <iframe
             width="560"
             height="315"
-            src={ `https://www.youtube.com/embed/${viewingImage.link.split(`=`).pop()}` }
-            frameBorder="0" allowFullScreen
+            title={viewingImage.link}
+            src={`https://www.youtube.com/embed/${viewingImage.link
+              .split(`=`)
+              .pop()}`}
+            frameBorder="0"
+            allowFullScreen
           />
-        }
-        { viewingImage.link.includes(`youtube`) ||
+        )}
+        {viewingImage.link.includes(`youtube`) || (
           <img
-            src = { viewingImage.link }
-            style = {{
+            src={viewingImage.link}
+            style={{
               maxWidth: `40rem`,
             }}
           />
-        }
-        { viewingImage.width && viewingImage.height &&
+        )}
+        {viewingImage.width &&
+          viewingImage.height && (
+            <div
+              style={{
+                marginBottom: `1rem`,
+              }}
+            >
+              {viewingImage.width}px - {viewingImage.height}px
+            </div>
+          )}
         <div
-          style = {{
-            marginBottom: `1rem`,
-          }}
-        >
-          { viewingImage.width }px - { viewingImage.height }px
-        </div>
-        }
-        <div
-          style = {{
+          style={{
             fontSize: `1.2rem`,
             marginTop: `1.5rem`,
           }}
         >
-          { viewingImage.caption }
+          {viewingImage.caption}
         </div>
-        { asAdmin &&
+        {asAdmin && (
           <textarea
-            ref = { node => feedback = node }
-            rows = "10"
-            placeholder = "Provide feedback (optional)"
-            defaultValue = { viewingImage.feedback }
-            style = {{
+            ref={node => (feedback = node)}
+            rows="10"
+            placeholder="Provide feedback (optional)"
+            defaultValue={viewingImage.feedback}
+            style={{
               margin: `1rem 0`,
               padding: `0.5rem`,
               height: `8rem`,
             }}
           />
-        }
+        )}
         <StarRating
-          rate = {
-            rating => {
-              let ratingSpec = {
-                rating,
-                viewingImage,
-              }
-
-              if (asAdmin) ratingSpec.feedback = feedback.value
-
-              rate(ratingSpec)
+          rate={rating => {
+            let ratingSpec = {
+              rating,
+              viewingImage,
             }
-          }
+
+            if (asAdmin) ratingSpec.feedback = feedback.value
+
+            rate(ratingSpec)
+          }}
         />
         <div
-          style = {{
+          style={{
             textAlign: `center`,
             fontSize: `1.3em`,
           }}
         >
-          { (!!message || asAdmin) ||
-          <div>You can only vote once! Make it count.</div>
-          }
-          { !!message &&
-          <div>{ message }</div>
-          }
+          {!!message ||
+            asAdmin || <div>You can only vote once! Make it count.</div>}
+          {!!message && <div>{message}</div>}
         </div>
       </div>
     </div>

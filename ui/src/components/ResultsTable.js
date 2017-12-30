@@ -2,14 +2,10 @@ import React from 'react'
 import moment from 'moment'
 import averageCriticalAssessmentScore from '../utils/averageCriticalAssessmentScore'
 
-export default function ResultsTable ({
-  images,
-  getOwnerRating,
-  viewImage,
-}) {
+export default function ResultsTable({ images, getOwnerRating, viewImage }) {
   return (
     <table
-      style = {{
+      style={{
         width: `100%`,
       }}
     >
@@ -26,30 +22,30 @@ export default function ResultsTable ({
         </tr>
       </thead>
       <tbody>
-        { images.map((image, i) =>
-        <tr
-          key = { i }
-        >
-          <td>{ image.userEmail }</td>
-          <td>
-            <a
-              onClick = { () => viewImage({ image }) }
-              style = {{
-                color: `rgb(50, 140, 205)`,
-                fontWeight: `bold`,
-              }}
-            >
-              View Image
-            </a>
-          </td>
-          <td>{ image.uploadDate ? moment(image.uploadDate).fromNow() : `` }</td>
-          <td>{ image.raters.length }</td>
-          <td>{ image.averageRating }</td>
-          <td>{ getOwnerRating(image) }</td>
-          <td>{ image.imagesToRate.filter(x => x.rating).length }</td>
-          <td>{ averageCriticalAssessmentScore(image) || 0 }</td>
-        </tr>
-        )}
+        {images.map((image, i) => (
+          <tr key={i}>
+            <td>{image.userEmail}</td>
+            <td>
+              <a
+                onClick={() => viewImage({ image })}
+                style={{
+                  color: `rgb(50, 140, 205)`,
+                  fontWeight: `bold`,
+                }}
+              >
+                View Image
+              </a>
+            </td>
+            <td>
+              {image.uploadDate ? moment(image.uploadDate).fromNow() : ``}
+            </td>
+            <td>{image.raters.length}</td>
+            <td>{image.averageRating}</td>
+            <td>{getOwnerRating(image)}</td>
+            <td>{image.imagesToRate.filter(x => x.rating).length}</td>
+            <td>{averageCriticalAssessmentScore(image) || 0}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   )

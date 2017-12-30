@@ -1,65 +1,62 @@
-import React, { Component } from 'react'
-import auth from '../auth'
+import React from 'react'
+import { parse } from 'query-string'
 
 let email, password
 
-export default function Login ({
-  login,
-  message
-}) {
+export default function Login({ login, message, location }) {
+  let nextPathname = parse(location.search).nextPathname || '/'
+
   return (
     <div
-      style = {{
+      style={{
         height: `calc(100% - 5rem)`,
         display: `flex`,
         justifyContent: `center`,
-        alignItems: `center`
+        alignItems: `center`,
       }}
     >
       <div
-        style = {{
+        style={{
           display: `flex`,
           flexDirection: `column`,
-          minHeight: `200px`
+          minHeight: `200px`,
         }}
       >
+        <input ref={node => (email = node)} placeholder="Email.." type="text" />
         <input
-          ref = { node => email = node }
-          placeholder = "Email.."
-          type = "text"
-        />
-        <input
-          ref = { node => password = node }
-          placeholder = "Password.."
-          type = "password"
+          ref={node => (password = node)}
+          placeholder="Password.."
+          type="password"
         />
         <button
-          onClick = {
-            () => {
-              login(`login`, { email: email.value, password: password.value })
-            }
-          }
-          style = {{
-            marginTop: `0.5rem`
+          onClick={() => {
+            login({
+              type: `login`,
+              userInfo: { email: email.value, password: password.value },
+              nextPathname,
+            })
+          }}
+          style={{
+            marginTop: `0.5rem`,
           }}
         >
           Log In
         </button>
         <button
-          onClick = {
-            () => {
-              login(`signup`, { email: email.value, password: password.value })
-            }
-          }
-          style = {{
-            marginTop: `1rem`
+          onClick={() => {
+            login({
+              type: `signup`,
+              userInfo: { email: email.value, password: password.value },
+              nextPathname,
+            })
+          }}
+          style={{
+            marginTop: `1rem`,
           }}
         >
           Sign Up
         </button>
-        { !!message &&
-        <div>{ message }</div>
-        }
+        {!!message && <div>{message}</div>}
       </div>
     </div>
   )
