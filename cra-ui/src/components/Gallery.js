@@ -1,10 +1,10 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import ColorPicker from 'react-color'
 import moment from 'moment'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import GalleryLogin from './GalleryLogin'
-import Gallery_UserView from './Gallery_UserView'
+import GalleryUserView from './GalleryUserView'
 import ResultsTable from './ResultsTable'
 import ViewImage from './ViewImage'
 
@@ -463,7 +463,7 @@ export default class Gallery extends Component {
               </div>
 
               {this.state.gallery.owner !== localStorage.userEmail && (
-                <Gallery_UserView
+                <GalleryUserView
                   {...this.state}
                   clearDataUrl={this.clearDataUrl}
                   uploadFile={this.uploadFile}

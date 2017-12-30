@@ -158,7 +158,6 @@ export default class App extends Component {
         <AuthRoute
           path="/gallery/:galleryId"
           component={props => (
-            console.log(333, props),
             <Gallery socket={socket} params={props.match.params} />
           )}
         />
@@ -170,7 +169,7 @@ export default class App extends Component {
         />
         <Route
           path="/login"
-          component={p => <Login login={this.login} {...p} />}
+          component={p => <Login login={this.login} {...p} {...this.state} />}
         />
         {this.state.nextPathname && <Redirect to={this.state.nextPathname} />}
       </div>

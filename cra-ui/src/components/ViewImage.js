@@ -50,6 +50,7 @@ export default function ViewImage({
           <iframe
             width="560"
             height="315"
+            title={viewingImage.link}
             src={`https://www.youtube.com/embed/${viewingImage.link
               .split(`=`)
               .pop()}`}

@@ -39,6 +39,7 @@ export default function Gallery_UserView({
                 <div>
                   {userImage.link.includes(`youtube`) && (
                     <iframe
+                      title={userImage.link}
                       width="560"
                       height="315"
                       src={`https://www.youtube.com/embed/${userImage.link
@@ -117,6 +118,7 @@ export default function Gallery_UserView({
                 <iframe
                   width="560"
                   height="315"
+                  title={youtubeLink}
                   src={`https://www.youtube.com/embed/${youtubeLink
                     .split(`=`)
                     .pop()}`}

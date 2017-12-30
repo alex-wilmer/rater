@@ -1,6 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { parse } from 'query-string'
-import auth from '../auth'
 
 let email, password
 

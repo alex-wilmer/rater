@@ -1,5 +1,3 @@
-import { Redirect } from 'react-router-dom'
-
 export default {
   signup: async function(body, cb) {
     let response = await fetch(`${process.env.REACT_APP_DOMAIN}:8080/signup`, {
