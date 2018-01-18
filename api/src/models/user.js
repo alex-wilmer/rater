@@ -1,9 +1,12 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-let Schema = mongoose.Schema
+let Schema = mongoose.Schema;
 
-export default mongoose.model(`User`, new Schema({
-	email: String,
-	password: String,
-	admin: Boolean
-}))
+export default mongoose.model(
+  `User`,
+  new Schema({
+    username: String,
+    password: String,
+    admin: Boolean,
+  })
+);

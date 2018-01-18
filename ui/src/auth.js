@@ -1,47 +1,49 @@
 export default {
-  signup: async function(body, cb) {
-    let response = await fetch(`${process.env.REACT_APP_DOMAIN}:8080/signup`, {
+  signup: async function({ socket, ...body }, cb) {
+    let response = await fetch(`${process.env.REACT_APP_API}/signup`, {
       method: `POST`,
       headers: {
         'Content-Type': `application/json`,
       },
       body: JSON.stringify(body),
-    })
+    });
 
-    let { success, message } = await response.json()
-    if (success) this.login(body, cb)
-    else cb({ success, message })
+    let { success, message } = await response.json();
+    if (success) {
+      socket.emit('ui:newsignup', { username: body.username });
+      this.login(body, cb);
+    } else cb({ success, message });
   },
 
-  login: async function(body, cb) {
+  login: async function({ socket, ...body }, cb) {
     let response = await fetch(
-      `${process.env.REACT_APP_DOMAIN}:8080/api/authenticate`,
+      `${process.env.REACT_APP_API}/api/authenticate`,
       {
         method: `POST`,
         headers: { 'Content-Type': `application/json` },
         body: JSON.stringify(body),
       },
-    )
+    );
 
-    let { success, message, token, user } = await response.json()
+    let { success, message, token, user } = await response.json();
 
     if (success) {
-      localStorage.user = user
-      localStorage.token = token
-      localStorage.userId = user._id
-      localStorage.userEmail = user.email
-      cb({ success, message, user })
+      localStorage.admin = user.admin;
+      localStorage.token = token;
+      localStorage.userId = user._id;
+      localStorage.username = user.username;
+      cb({ success, message, user });
     } else {
-      cb({ message })
+      cb({ message });
     }
   },
 
   logout(cb) {
-    delete localStorage.token
-    if (cb) cb()
+    delete localStorage.token;
+    if (cb) cb();
   },
 
   loggedIn() {
-    return !!localStorage.token
+    return !!localStorage.token;
   },
-}
+};

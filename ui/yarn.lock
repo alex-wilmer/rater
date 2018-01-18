@@ -5377,6 +5377,10 @@ react-event-listener@^0.5.1:
     prop-types "^15.6.0"
     warning "^3.0.0"
 
+react-pin-input@^0.6.5:
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/react-pin-input/-/react-pin-input-0.6.5.tgz#1897347c335a0d4a33f8bb8eae68c952e705f4ca"
+
 react-router-dom@^4.2.2:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-4.2.2.tgz#c8a81df3adc58bba8a76782e946cbd4eae649b8d"

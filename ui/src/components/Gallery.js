@@ -1,12 +1,12 @@
-import React, { Component } from 'react'
-import ColorPicker from 'react-color'
-import moment from 'moment'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import GalleryLogin from './GalleryLogin'
-import GalleryUserView from './GalleryUserView'
-import ResultsTable from './ResultsTable'
-import ViewImage from './ViewImage'
+import React, { Component } from 'react';
+import ColorPicker from 'react-color';
+import moment from 'moment';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import GalleryLogin from './GalleryLogin';
+import GalleryUserView from './GalleryUserView';
+import ResultsTable from './ResultsTable';
+import ViewImage from './ViewImage';
 
 export default class Gallery extends Component {
   state = {
@@ -17,113 +17,110 @@ export default class Gallery extends Component {
     viewingImage: null,
     loading: true,
     deleteModalOpen: false,
-  }
+  };
 
   componentDidMount() {
-    this.getGallery({})
+    this.getGallery({});
 
     this.props.socket.on(`api:updateGallery`, gallery => {
       if (!this.state.needToAuth) {
         let userImage = (gallery.images || []).find(
-          x => x.userEmail === localStorage.userEmail,
-        )
+          x => x.username === localStorage.username,
+        );
 
         if (userImage) {
-          this.setState({ userImage })
+          this.setState({ userImage });
         }
 
-        if (gallery.color) this.props.setHeaderColor(gallery.color)
+        if (gallery.color) this.props.setHeaderColor(gallery.color);
 
-        this.setState({ gallery })
+        this.setState({ gallery });
       }
-    })
+    });
   }
 
-  openDeleteModal = () => this.setState({ deleteModalOpen: true })
-  closeDeleteModal = () => this.setState({ deleteModalOpen: false })
+  openDeleteModal = () => this.setState({ deleteModalOpen: true });
+  closeDeleteModal = () => this.setState({ deleteModalOpen: false });
 
   getGallery = async ({ password }) => {
-    let { params, setHeaderColor } = this.props
+    let { params, setHeaderColor } = this.props;
 
-    let response = await fetch(
-      `${process.env.REACT_APP_DOMAIN}:8080/api/gallery`,
-      {
-        method: `POST`,
-        headers: { 'Content-Type': `application/json` },
-        body: JSON.stringify({
-          token: localStorage.token,
-          galleryId: params.galleryId,
-          userEmail: localStorage.userEmail,
-          password,
-        }),
-      },
-    )
+    let response = await fetch(`${process.env.REACT_APP_API}/api/gallery`, {
+      method: `POST`,
+      headers: { 'Content-Type': `application/json` },
+      body: JSON.stringify({
+        token: localStorage.token,
+        galleryId: params.galleryId,
+        username: localStorage.username,
+        password,
+      }),
+    });
 
-    let gallery = await response.json()
+    let gallery = await response.json();
 
     // if (gallery.color) setHeaderColor(gallery.color)
 
     if (gallery.needToAuth) {
-      this.setState({ needToAuth: true })
+      this.setState({ needToAuth: true });
       if (gallery.message) {
-        this.setState({ message: gallery.message })
+        this.setState({ message: gallery.message });
       }
     } else {
       let userImage = gallery.images.filter(
-        x => x.userEmail === localStorage.userEmail,
-      )[0]
+        x => x.username === localStorage.username,
+      )[0];
 
       if (userImage) {
-        this.setState({ userImage })
+        this.setState({ userImage });
       }
 
       this.setState({
         gallery,
         needToAuth: false,
-      })
+      });
     }
 
-    this.setState({ loading: false })
-  }
+    this.setState({ loading: false });
+  };
 
   uploadFile = event => {
-    let files = event.target.files
+    let files = event.target.files;
 
     if (!files.length) {
-      return console.log(`no file chosen`)
+      return console.log(`no file chosen`);
     }
 
-    let file = files[0]
-    let fileReader = new FileReader()
-    let img = new Image()
-    let _URL = window.URL || window.webkitURL
-    img.src = _URL.createObjectURL(file)
+    let file = files[0];
+    let fileReader = new FileReader();
+    let img = new Image();
+    let _URL = window.URL || window.webkitURL;
+    img.src = _URL.createObjectURL(file);
 
     fileReader.onload = event => {
-      let dataUrl = event.target.result
+      let dataUrl = event.target.result;
       this.setState({
         dataUrl,
         imageSize: {
           width: img.width,
           height: img.height,
         },
-      })
-    }
+      });
+    };
 
-    fileReader.readAsDataURL(file)
-  }
+    fileReader.readAsDataURL(file);
+  };
 
   clearDataUrl = () => {
-    this.setState({ dataUrl: null })
-  }
+    this.setState({ dataUrl: null });
+  };
 
   uploadToImgur = async ({ caption }) => {
     let format = string => {
-      let [type, ...data] = string.split(',') // eslint-disable-line
-      return data.join()
-    }
+      let [type, ...data] = string.split(','); // eslint-disable-line
+      return data.join();
+    };
 
-    this.setState({ loading: true })
+    this.setState({ loading: true });
 
     let response = await fetch(`https://api.imgur.com/3/image`, {
       method: `POST`,
@@ -136,170 +133,171 @@ export default class Gallery extends Component {
         image: format(this.state.dataUrl),
         type: `base64`,
       }),
-    })
+    });
 
-    let { data } = await response.json()
+    let { data } = await response.json();
 
     if (data.link) {
-      this.setState({ dataUrl: null })
+      this.setState({ dataUrl: null });
 
       this.saveToDb({
         link: data.link,
         width: data.width,
         height: data.height,
         caption,
-      })
+      });
     }
 
-    this.setState({ loading: false })
-  }
+    this.setState({ loading: false });
+  };
 
   saveToDb = async ({ link, width, height, caption }) => {
-    let { params } = this.props
+    let { params } = this.props;
 
     let response = await fetch(
-      `${process.env.REACT_APP_DOMAIN}:8080/api/gallery/image`,
+      `${process.env.REACT_APP_API}/api/gallery/image`,
       {
         method: `POST`,
         headers: { 'Content-Type': `application/json` },
         body: JSON.stringify({
           token: localStorage.token,
           galleryId: params.galleryId,
-          userEmail: localStorage.userEmail,
+          username: localStorage.username,
           link,
           caption,
           width,
           height,
         }),
       },
-    )
+    );
 
-    let { image } = await response.json()
-    this.setState({ userImage: image, youtubeLink: `` })
-  }
+    let { image } = await response.json();
+    this.setState({ userImage: image, youtubeLink: `` });
+  };
 
   activateDeadline = async () => {
-    let { params } = this.props
+    let { params } = this.props;
 
     let response = await fetch(
-      `${process.env.REACT_APP_DOMAIN}:8080/api/gallery/activate`,
+      `${process.env.REACT_APP_API}/api/gallery/activate`,
       {
         method: `POST`,
         headers: { 'Content-Type': `application/json` },
         body: JSON.stringify({
           token: localStorage.token,
           galleryId: params.galleryId,
-          userEmail: localStorage.userEmail,
+          username: localStorage.username,
         }),
       },
-    )
+    );
 
-    let json = await response.json()
-    this.setState({ gallery: json.gallery })
-  }
+    let json = await response.json();
+    this.setState({ gallery: json.gallery });
+  };
 
   viewImage = ({ image }) => {
     if (image && !image.rating) {
-      this.setState({ viewingImage: image })
+      this.setState({ viewingImage: image });
     } else if (!image) {
-      this.setState({ viewingImage: image })
+      this.setState({ viewingImage: image });
     }
-  }
+  };
 
   rate = async ({ viewingImage, rating, feedback }) => {
-    let { params } = this.props
+    let { params } = this.props;
 
-    let multiplier = +(this.refs.multiplier || {}).value
+    let multiplier = +(this.refs.multiplier || {}).value;
 
     let ratingSpec = {
       token: localStorage.token,
       galleryId: params.galleryId,
-      userEmail: localStorage.userEmail,
+      username: localStorage.username,
       viewingImage,
       rating,
       multiplier,
-    }
+    };
 
-    if (this.state.gallery.owner === localStorage.userEmail) {
-      ratingSpec.feedback = feedback
+    if (this.state.gallery.owner === localStorage.username) {
+      ratingSpec.feedback = feedback;
     }
 
     let response = await fetch(
-      `${process.env.REACT_APP_DOMAIN}:8080/api/gallery/vote`,
+      `${process.env.REACT_APP_API}/api/gallery/vote`,
       {
         method: `POST`,
         headers: { 'Content-Type': `application/json` },
         body: JSON.stringify(ratingSpec),
       },
-    )
+    );
 
-    let { gallery, success, message } = await response.json()
+    let { gallery, success, message } = await response.json();
 
     if (success) {
       this.setState({
         userImage: gallery.images.filter(
-          x => x.userEmail === localStorage.userEmail,
+          x => x.username === localStorage.username,
         )[0],
         gallery,
         message: `Thank you!`,
-      })
+      });
 
       setTimeout(() => {
         this.setState({
           message: null,
           viewingImage: null,
-        })
-      }, 1000)
+        });
+      }, 1000);
     } else {
-      console.log(message)
+      console.log(message);
     }
-  }
+  };
 
   getOwnerRating = image => {
     let owner = image.raters.filter(
-      x => x.userEmail === localStorage.userEmail,
-    )[0]
+      x => x.username === localStorage.username,
+    )[0];
 
     if (owner) {
-      return `${owner.rating} (${owner.rating /
-        owner.multiplier} * ${owner.multiplier})`
+      return `${owner.rating} (${owner.rating / owner.multiplier} * ${
+        owner.multiplier
+      })`;
     }
-  }
+  };
 
   setColor = color => {
     this.props.socket.emit(`ui:setGalleryColor`, {
       color,
       _id: this.state.gallery._id,
-    })
-    this.setState({ colorPickerOpen: false })
-  }
+    });
+    this.setState({ colorPickerOpen: false });
+  };
 
   togglePublic = () => {
     this.props.socket.emit(`ui:togglePublic`, {
       _id: this.state.gallery._id,
-    })
-  }
+    });
+  };
 
   deleteGallery = async () => {
-    let { params } = this.props
+    let { params, history } = this.props;
 
-    await fetch(`${process.env.REACT_APP_DOMAIN}:8080/api/gallery/delete`, {
+    await fetch(`${process.env.REACT_APP_API}/api/gallery/delete`, {
       method: `POST`,
       headers: { 'Content-Type': `application/json` },
       body: JSON.stringify({
         token: localStorage.token,
         galleryId: params.galleryId,
       }),
-    })
+    });
 
-    this.context.history.pushState(null, `/`)
-  }
+    history.push('/');
+  };
 
   submitYoutube = ({ youtubeLink }) => {
-    this.setState({ youtubeLink })
-  }
+    this.setState({ youtubeLink });
+  };
 
-  clearYoutubelink = () => this.setState({ youtubeLink: `` })
+  clearYoutubelink = () => this.setState({ youtubeLink: `` });
 
   render() {
     let actions = [
@@ -307,16 +305,16 @@ export default class Gallery extends Component {
         key="button1"
         label="Cancel"
         secondary={true}
-        onTouchTap={this.closeDeleteModal}
+        onClick={this.closeDeleteModal}
       />,
       <FlatButton
         key="button2"
         label="Yes, Delete It!"
         primary={true}
         keyboardFocused={true}
-        onTouchTap={this.deleteGallery}
+        onClick={this.deleteGallery}
       />,
-    ]
+    ];
 
     return (
       <div>
@@ -355,7 +353,7 @@ export default class Gallery extends Component {
           <div>
             {!!this.state.viewingImage && (
               <ViewImage
-                asAdmin={this.state.gallery.owner === localStorage.userEmail}
+                asAdmin={this.state.gallery.owner === localStorage.username}
                 message={this.state.message}
                 rate={this.rate}
                 viewingImage={this.state.viewingImage}
@@ -370,7 +368,7 @@ export default class Gallery extends Component {
             >
               <div>Gallery: {this.state.gallery.name}</div>
 
-              {this.state.gallery.owner === localStorage.userEmail && (
+              {this.state.gallery.owner === localStorage.username && (
                 <div>
                   <div>Password: {this.state.gallery.password}</div>
 
@@ -462,7 +460,7 @@ export default class Gallery extends Component {
                 </span>
               </div>
 
-              {this.state.gallery.owner !== localStorage.userEmail && (
+              {this.state.gallery.owner !== localStorage.username && (
                 <GalleryUserView
                   {...this.state}
                   clearDataUrl={this.clearDataUrl}
@@ -475,7 +473,7 @@ export default class Gallery extends Component {
                 />
               )}
 
-              {this.state.gallery.owner === localStorage.userEmail && (
+              {this.state.gallery.owner === localStorage.username && (
                 <div style={{ marginTop: `2rem` }}>
                   <ResultsTable
                     images={this.state.gallery.images}
@@ -494,6 +492,6 @@ export default class Gallery extends Component {
           />
         )}
       </div>
-    )
+    );
   }
 }

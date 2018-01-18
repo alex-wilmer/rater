@@ -1,33 +1,30 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 export default class Home extends Component {
-  state = { galleries: [] }
+  state = { galleries: [] };
 
   componentDidMount() {
-    this.getGalleries()
+    this.getGalleries();
   }
 
   getGalleries = async () => {
-    let response = await fetch(
-      `${process.env.REACT_APP_DOMAIN}:8080/api/galleries`,
-      {
-        method: `POST`,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token: localStorage.token,
-          userId: localStorage.userId,
-          userEmail: localStorage.userEmail,
-        }),
-      },
-    )
+    let response = await fetch(`${process.env.REACT_APP_API}/api/galleries`, {
+      method: `POST`,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: localStorage.token,
+        userId: localStorage.userId,
+        username: localStorage.username,
+      }),
+    });
 
-    let json = await response.json()
+    let json = await response.json();
 
     this.setState({
       galleries: json || [],
-    })
-  }
+    });
+  };
 
   render() {
     return (
@@ -78,6 +75,6 @@ export default class Home extends Component {
             ))}
         </div>
       </div>
-    )
+    );
   }
 }

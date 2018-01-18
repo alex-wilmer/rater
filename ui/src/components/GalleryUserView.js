@@ -1,9 +1,9 @@
-import React from 'react'
-import ImagesToRate from './ImagesToRate'
-import UploadImage from './UploadImage'
-import averageCriticalAssessmentScore from '../utils/averageCriticalAssessmentScore'
+import React from 'react';
+import ImagesToRate from './ImagesToRate';
+import UploadImage from './UploadImage';
+import averageCriticalAssessmentScore from '../utils/averageCriticalAssessmentScore';
 
-let youtube, textarea
+let youtube, textarea;
 
 export default function Gallery_UserView({
   clearDataUrl,
@@ -147,7 +147,8 @@ export default function Gallery_UserView({
                 <button onClick={clearYoutubelink}>Cancel</button>
                 <button
                   onClick={() =>
-                    saveToDb({ link: youtubeLink, caption: textarea.value })}
+                    saveToDb({ link: youtubeLink, caption: textarea.value })
+                  }
                   style={{
                     marginLeft: `3rem`,
                   }}
@@ -158,7 +159,9 @@ export default function Gallery_UserView({
             )}
         </div>
       )}
-      {gallery.passedDeadline && (
+      {gallery.passedDeadline &&
+        !userImage && <div>The deadline has passed.</div>}
+      {/* {gallery.passedDeadline && (
         <div>
           {!!userImage && ( // user has submitted
             <div>
@@ -210,8 +213,8 @@ export default function Gallery_UserView({
             </div>
           )}
           {!!userImage || <div>The deadline has passed.</div>}
-        </div>
+        </div> */}
       )}
     </div>
-  )
+  );
 }
