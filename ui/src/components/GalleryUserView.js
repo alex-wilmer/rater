@@ -1,9 +1,9 @@
-import React from 'react';
-import ImagesToRate from './ImagesToRate';
-import UploadImage from './UploadImage';
-import averageCriticalAssessmentScore from '../utils/averageCriticalAssessmentScore';
+import React from 'react'
+import ImagesToRate from './ImagesToRate'
+import UploadImage from './UploadImage'
+import averageCriticalAssessmentScore from '../utils/averageCriticalAssessmentScore'
 
-let youtube, textarea;
+let youtube, textarea
 
 export default function Gallery_UserView({
   clearDataUrl,
@@ -214,7 +214,6 @@ export default function Gallery_UserView({
           )}
           {!!userImage || <div>The deadline has passed.</div>}
         </div> */}
-      )}
     </div>
-  );
+  )
 }

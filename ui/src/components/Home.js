@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 
 export default class Home extends Component {
-  state = { galleries: [] };
+  state = { galleries: [] }
 
   componentDidMount() {
-    this.getGalleries();
+    this.getGalleries()
   }
 
   getGalleries = async () => {
@@ -17,14 +17,14 @@ export default class Home extends Component {
         userId: localStorage.userId,
         username: localStorage.username,
       }),
-    });
+    })
 
-    let json = await response.json();
+    let json = await response.json()
 
     this.setState({
       galleries: json || [],
-    });
-  };
+    })
+  }
 
   render() {
     return (
@@ -75,6 +75,6 @@ export default class Home extends Component {
             ))}
         </div>
       </div>
-    );
+    )
   }
 }
