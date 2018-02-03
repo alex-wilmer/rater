@@ -269,7 +269,7 @@ export default class Gallery extends Component {
       color,
       _id: this.state.gallery._id,
     })
-    this.setState({ colorPickerOpen: false })
+    // this.setState({ colorPickerOpen: false })
   }
 
   togglePublic = () => {
